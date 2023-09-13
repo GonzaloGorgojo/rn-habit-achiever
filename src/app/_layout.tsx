@@ -1,17 +1,17 @@
-import { Colors } from "@src/constants/colors";
-import { Stack } from "expo-router";
+import { Colors } from '@src/constants/colors';
+import { Stack } from 'expo-router';
 
 export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        title: "Habit Tracker",
+        title: 'Habit Tracker',
         headerStyle: {
           backgroundColor: Colors.mainColor,
         },
-        headerTitleAlign: "center",
+        headerTitleAlign: 'center',
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: 'bold',
         },
       }}
     />
