@@ -1,0 +1,192 @@
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "habit": "Going to the gym",
+    "consecutiveDaysCompleted": 5,
+    "maxConsecutiveDaysCompleted": 7,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 2,
+    "userId": 1,
+    "habit": "Reading",
+    "consecutiveDaysCompleted": 3,
+    "maxConsecutiveDaysCompleted": 5,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 3,
+    "userId": 1,
+    "habit": "Running",
+    "consecutiveDaysCompleted": 27,
+    "maxConsecutiveDaysCompleted": 27,
+    "habitReached": true,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 4,
+    "userId": 1,
+    "habit": "Meditation",
+    "consecutiveDaysCompleted": 40,
+    "maxConsecutiveDaysCompleted": 40,
+    "habitReached": true,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 5,
+    "userId": 1,
+    "habit": "Eating healthy",
+    "consecutiveDaysCompleted": 7,
+    "maxConsecutiveDaysCompleted": 7,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 6,
+    "userId": 1,
+    "habit": "Drinking water",
+    "consecutiveDaysCompleted": 3,
+    "maxConsecutiveDaysCompleted": 3,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 7,
+    "userId": 1,
+    "habit": "Sleeping early",
+    "consecutiveDaysCompleted": 4,
+    "maxConsecutiveDaysCompleted": 4,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 8,
+    "userId": 1,
+    "habit": "Waking up early",
+    "consecutiveDaysCompleted": 17,
+    "maxConsecutiveDaysCompleted": 17,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 9,
+    "userId": 1,
+    "habit": "No smoking",
+    "consecutiveDaysCompleted": 20,
+    "maxConsecutiveDaysCompleted": 20,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 10,
+    "userId": 1,
+    "habit": "No alcohol",
+    "consecutiveDaysCompleted": 16,
+    "maxConsecutiveDaysCompleted": 16,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 11,
+    "userId": 1,
+    "habit": "No sugar",
+    "consecutiveDaysCompleted": 13,
+    "maxConsecutiveDaysCompleted": 13,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 12,
+    "userId": 1,
+    "habit": "No junk food",
+    "consecutiveDaysCompleted": 11,
+    "maxConsecutiveDaysCompleted": 11,
+    "habitReached": false,
+    "goal": 21,
+    "ask": true
+  },
+  {
+    "id": 13,
+    "userId": 1,
+    "habit": "No social media",
+    "consecutiveDaysCompleted": 1,
+    "maxConsecutiveDaysCompleted": 1,
+    "habitReached": false,
+    "goal": 21,
+    "ask": false
+  },
+  {
+    "id": 14,
+    "userId": 1,
+    "habit": "No caffeine",
+    "consecutiveDaysCompleted": 2,
+    "maxConsecutiveDaysCompleted": 2,
+    "habitReached": false,
+    "goal": 21,
+    "ask": false
+  },
+  {
+    "id": 15,
+    "userId": 1,
+    "habit": "No soda",
+    "consecutiveDaysCompleted": 8,
+    "maxConsecutiveDaysCompleted": 8,
+    "habitReached": false,
+    "goal": 21,
+    "ask": false
+  },
+  {
+    "id": 16,
+    "userId": 1,
+    "habit": "No fast food",
+    "consecutiveDaysCompleted": 22,
+    "maxConsecutiveDaysCompleted": 22,
+    "habitReached": true,
+    "goal": 21,
+    "ask": false
+  },
+  {
+    "id": 17,
+    "userId": 1,
+    "habit": "No TV",
+    "consecutiveDaysCompleted": 28,
+    "maxConsecutiveDaysCompleted": 28,
+    "habitReached": true,
+    "goal": 21,
+    "ask": false
+  },
+  {
+    "id": 18,
+    "userId": 1,
+    "habit": "No video games",
+    "consecutiveDaysCompleted": 50,
+    "maxConsecutiveDaysCompleted": 50,
+    "habitReached": true,
+    "goal": 21,
+    "ask": false
+  },
+  {
+    "id": 19,
+    "userId": 1,
+    "habit": "No swearing",
+    "consecutiveDaysCompleted": 90,
+    "maxConsecutiveDaysCompleted": 90,
+    "habitReached": true,
+    "goal": 21,
+    "ask": false
+  }
+]
