@@ -11,7 +11,7 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        title: `Welcome ${activeUser?.name} !`,
+        title: `Welcome ${activeUser?.name}!`,
         headerStyle: {
           backgroundColor: Colors.mainColor,
         },
@@ -22,7 +22,9 @@ export default function Layout() {
 
         headerRight: () => (
           <TouchableOpacity onPress={() => alert('Settings')}>
-            <AntDesign name="setting" size={30} color="black" />
+            <Link href="/settingsModal">
+              <AntDesign name="setting" size={30} color="black" />
+            </Link>
           </TouchableOpacity>
         ),
 
@@ -38,6 +40,13 @@ export default function Layout() {
       <Stack.Screen name="index" />
       <Stack.Screen
         name="addHabitModal"
+        options={{
+          presentation: 'modal',
+          headerLeft: undefined,
+        }}
+      />
+      <Stack.Screen
+        name="settingsModal"
         options={{
           presentation: 'modal',
           headerLeft: undefined,

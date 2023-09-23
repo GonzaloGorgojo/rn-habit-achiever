@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { achievedHabitStyle } from './achievedHabit.style';
 import allHabits from '@src/database/habits.json';
 import { IHabit } from '@src/common/interfaces/dbInterfaces';
@@ -22,10 +22,11 @@ const AchievedHabit = () => {
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             return (
-              <View style={commonStyle.habit} key={item.id}>
-                <Text>{item.habit}: </Text>
-                <Text>{item.consecutiveDaysCompleted} days</Text>
-              </View>
+              <TouchableOpacity style={commonStyle.habit} key={item.id}>
+                <Text style={commonStyle.habitText}>
+                  {item.habit}: {item.consecutiveDaysCompleted} days
+                </Text>
+              </TouchableOpacity>
             );
           }}
         />

@@ -19,22 +19,22 @@ const Statistics = () => {
 
       <View style={statisticsStyle.rowView}>
         <View style={statisticsStyle.columnView}>
-          <Text>Last 365 days: </Text>
+          <Text style={statisticsStyle.title}>Last 365 days: </Text>
           <Text>{habitsAchieved.length}</Text>
         </View>
         <View style={statisticsStyle.columnView}>
-          <Text>Total Achieved: </Text>
+          <Text style={statisticsStyle.title}>Total Achieved: </Text>
           <Text>{habitsAchieved.length}</Text>
         </View>
       </View>
 
       <View style={statisticsStyle.rowView}>
         <View style={statisticsStyle.columnView}>
-          <Text>Some Other stat: </Text>
+          <Text style={statisticsStyle.title}>Some Other stat: </Text>
           <Text>{currentHabits.length}</Text>
         </View>
         <View style={statisticsStyle.columnView}>
-          <Text>Current Habits: </Text>
+          <Text style={statisticsStyle.title}>Current Habits: </Text>
           <Text>{currentHabits.length}</Text>
         </View>
       </View>

@@ -6,7 +6,7 @@
     "consecutiveDaysCompleted": 5,
     "maxConsecutiveDaysCompleted": 7,
     "habitReached": false,
-    "goal": 21,
+    "goal": 33,
     "ask": true
   },
   {
@@ -43,8 +43,8 @@
     "id": 5,
     "userId": 1,
     "habit": "Eating healthy",
-    "consecutiveDaysCompleted": 7,
-    "maxConsecutiveDaysCompleted": 7,
+    "consecutiveDaysCompleted": 10,
+    "maxConsecutiveDaysCompleted": 10,
     "habitReached": false,
     "goal": 21,
     "ask": true

@@ -4,4 +4,7 @@ export const Colors = {
   errorColor: '#ff0000',
   black: '#000000',
   grey: '#808080',
+  white: '#ffffff',
+  lightYellow: '#f0f099',
+  lightMainColor: '#c6f5eb',
 };

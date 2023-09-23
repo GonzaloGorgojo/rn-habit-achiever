@@ -16,5 +16,5 @@ export interface IHabit {
 
 export interface ICreateHabit {
   habit: string;
-  description: string;
+  goal: number;
 }

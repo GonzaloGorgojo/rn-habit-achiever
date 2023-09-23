@@ -1,5 +1,7 @@
 import { Colors } from '@src/common/constants/colors';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
+
+const isAndroid = Platform.OS === 'android' ? true : false;
 
 export const statisticsStyle = StyleSheet.create({
   container: {
@@ -8,10 +10,11 @@ export const statisticsStyle = StyleSheet.create({
     height: '20%',
     backgroundColor: Colors.mainColor,
     borderRadius: 10,
+    marginBottom: isAndroid ? 10 : 0,
   },
   rowView: {
     flexDirection: 'row',
-    marginVertical: 5,
+    marginVertical: isAndroid ? 8 : 5,
   },
   columnView: {
     width: '40%',
@@ -21,5 +24,11 @@ export const statisticsStyle = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     marginHorizontal: 5,
+    backgroundColor: Colors.white,
+    paddingBottom: 2,
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
