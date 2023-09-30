@@ -1,24 +1,14 @@
-import AchievedHabit from '@src/components/achievedHabits/AchievedHabit.component';
-import CurrentHabit from '@src/components/currentHabit/CurrentHabit.component';
-import Statistics from '@src/components/stadistics/Statistics.component';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import '@src/languages/i18n';
+import users from '@src/database/users.json';
+import { IUser } from '@src/common/interfaces/dbInterfaces';
+import { Redirect } from 'expo-router';
 
-export default function Page() {
-  return (
-    <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
-      <StatusBar style="dark" />
-      <CurrentHabit />
-      <AchievedHabit />
-      <Statistics />
-    </SafeAreaView>
-  );
+export default function Main() {
+  const activeUser: IUser = users.find((user) => user.active) as IUser;
+
+  if (!activeUser) {
+    return <Redirect href="/homeScreen" />;
+  } else {
+    return <Redirect href="/loginScreen" />;
+  }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-  },
-});

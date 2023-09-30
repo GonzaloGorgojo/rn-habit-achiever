@@ -3,7 +3,7 @@ import { Colors } from '../constants/colors';
 
 export const commonStyle = StyleSheet.create({
   title: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   flatlist: {
@@ -28,7 +28,21 @@ export const commonStyle = StyleSheet.create({
     borderColor: Colors.black,
   },
   habitText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 3,
+  },
+  textInput: {
+    width: '80%',
+    height: 40,
+    borderColor: Colors.black,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginVertical: 5,
   },
 });

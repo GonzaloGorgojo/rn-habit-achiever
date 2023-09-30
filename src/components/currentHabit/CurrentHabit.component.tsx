@@ -6,18 +6,20 @@ import { IHabit } from '@src/common/interfaces/dbInterfaces';
 import { calculatePercentage } from '@src/common/helpers/calculation.helper';
 import { commonStyle } from '@src/common/style/commonStyle.style';
 import { Colors } from '@src/common/constants/colors';
+import { useTranslation } from 'react-i18next';
 
 const CurrentHabit = () => {
+  const { t } = useTranslation();
   const habits: IHabit[] = allHabits.filter(
     (habit) => habit.userId === 1 && habit.habitReached === false,
   ) as IHabit[];
 
   return (
     <View style={currentHabitStyle.container}>
-      <Text style={commonStyle.title}>Current Habits</Text>
+      <Text style={commonStyle.title}>{t('currentHabits')}</Text>
       <View style={commonStyle.straightLine} />
       {habits?.length <= 0 ? (
-        <Text>There are no habits</Text>
+        <Text style={commonStyle.habitText}>{t('noHabits')}</Text>
       ) : (
         <FlatList
           style={commonStyle.flatlist}

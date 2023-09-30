@@ -4,14 +4,16 @@ import { TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import users from '@src/database/users.json';
 import { IUser } from '@src/common/interfaces/dbInterfaces';
+import { useTranslation } from 'react-i18next';
 
 export default function Layout() {
+  const { t } = useTranslation();
   const activeUser: IUser = users.find((user) => user.active) as IUser;
 
   return (
     <Stack
       screenOptions={{
-        title: `Welcome ${activeUser?.name}!`,
+        title: `${t('welcome')} ${activeUser?.name}!`,
         headerStyle: {
           backgroundColor: Colors.mainColor,
         },
@@ -37,7 +39,15 @@ export default function Layout() {
         ),
       }}
     >
-      <Stack.Screen name="index" />
+      <Stack.Screen name="homeScreen" />
+      <Stack.Screen
+        name="loginScreen"
+        options={{
+          title: 'Habit Achiever',
+          headerLeft: undefined,
+          headerRight: undefined,
+        }}
+      />
       <Stack.Screen
         name="addHabitModal"
         options={{
@@ -50,6 +60,7 @@ export default function Layout() {
         options={{
           presentation: 'modal',
           headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
     </Stack>

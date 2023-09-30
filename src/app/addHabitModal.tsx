@@ -11,8 +11,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from 'react-native-a11y-slider';
+import { commonStyle } from '@src/common/style/commonStyle.style';
+import { useTranslation } from 'react-i18next';
 
 export default function Modal() {
+  const { t } = useTranslation();
   const [newHabit, setNewHabit] = useState<ICreateHabit>({
     habit: '',
     goal: 21,
@@ -20,12 +23,12 @@ export default function Modal() {
 
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.modal}>
-      <Text style={styles.label}>What Habit you want to achieve? </Text>
+      <Text style={commonStyle.label}>{t('addHabitQuestion')} </Text>
       <TextInput
-        style={styles.input}
+        style={commonStyle.textInput}
         value={newHabit.habit}
         maxLength={40}
-        placeholder="E.g: Reading, sleeping early."
+        placeholder={t('exampleHabit')}
         placeholderTextColor={Colors.grey}
         onChangeText={(txt) =>
           setNewHabit({
@@ -34,7 +37,7 @@ export default function Modal() {
           })
         }
       />
-      <Text style={styles.label}>Goal: </Text>
+      <Text style={commonStyle.label}>{t('goal')}: </Text>
       <View style={styles.slider}>
         <Slider
           min={21}
@@ -49,21 +52,11 @@ export default function Modal() {
         style={styles.createButton}
         onPress={() => alert(JSON.stringify(newHabit))}
       >
-        <Text style={styles.label}>Create Habit</Text>
+        <Text style={commonStyle.label}>{t('createHabitButton')}</Text>
       </TouchableOpacity>
       <View style={styles.informativeContainer}>
-        <Ionicons name="information-circle-outline" size={24} color="black" />
-        <Text style={styles.informative}>
-          A habit is a repetitive behavior or routine that you perform almost
-          automatically, often without consciously thinking about it. Habits can
-          be both positive and negative, shaping our daily lives and long-term
-          outcomes. It&apos;s often said that it takes around 21 to 66 days of
-          consistent practice to turn an activity into a habit, though the exact
-          timeframe can vary from person to person. Tracking your habits can
-          help you become more aware of your actions and work towards the goal
-          of making them a natural part of your daily life for a healthier and
-          more productive lifestyle.
-        </Text>
+        <Ionicons name="information-circle-outline" size={28} color="black" />
+        <Text style={styles.informative}>{t('information')}</Text>
       </View>
     </SafeAreaView>
   );
@@ -71,20 +64,6 @@ export default function Modal() {
 
 const styles = StyleSheet.create({
   modal: { flex: 1, alignItems: 'center', marginTop: 20 },
-  input: {
-    width: '80%',
-    height: 40,
-    borderColor: Colors.black,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    marginVertical: 5,
-  },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 3,
-  },
   createButton: {
     width: '40%',
     height: 40,
