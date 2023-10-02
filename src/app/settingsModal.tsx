@@ -1,33 +1,17 @@
 import { Colors } from '@src/common/constants/colors';
-import { commonStyle } from '@src/common/style/commonStyle.style';
+import SwitchSelectorComponent from '@src/components/SwitchSelector.component';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import SwitchSelector from 'react-native-switch-selector';
 
 export default function SettingsModal() {
-  const { t, i18n } = useTranslation();
-
-  const options = [
-    { label: 'Es', value: 'es' },
-    { label: 'En', value: 'en' },
-  ];
-  const indexOfLan = options.findIndex((opt) => opt.value === i18n.language);
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
-      <Text style={commonStyle.label}>{t('selectLanguage')}:</Text>
-      <View style={styles.switch}>
-        <SwitchSelector
-          accessibilityLabel="language-switch-selector"
-          options={options}
-          initial={indexOfLan}
-          onPress={(value: string) => i18n.changeLanguage(value)}
-          selectedColor={'black'}
-          buttonColor={Colors.mainColor}
-          borderColor={'black'}
-          hasPadding
-        />
+      <View style={styles.languageContainer}>
+        <Text style={styles.languageText}>{t('selectLanguage')}</Text>
+        <SwitchSelectorComponent style={styles.switch} />
       </View>
 
       <TouchableOpacity style={styles.deleteButton}>
@@ -64,5 +48,16 @@ const styles = StyleSheet.create({
   switch: {
     width: '20%',
     marginTop: 5,
+  },
+  languageContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
+    width: '100%',
+    paddingLeft: 10,
+  },
+  languageText: {
+    fontSize: 17,
+    marginRight: 10,
   },
 });

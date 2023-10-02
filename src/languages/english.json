@@ -3,15 +3,21 @@
     "achievedHabits": "Achieved Habits",
     "addHabitQuestion": "What habit would you like to achieve?",
     "createHabitButton": "Create Habit",
+    "createUser": "Create User",
     "currentHabits": "Habits in progress",
     "days": "days",
-    "exampleHabit": "E.g: Reading, sleeping early.",
     "deleteUserButton": "Delete User",
+    "exampleHabit": "E.g: Reading, sleeping early.",
+    "english": "EN",
     "goal": "Goal (days)",
     "habitsStatistics": "Habits Statistics",
     "information": "A habit is a repetitive behavior or routine that you perform almost automatically, often without consciously thinking about it. Habits can be both positive and negative, shaping our daily lives and long-term outcomes. It's often said that it takes around 21 to 66 days of consistent practice to turn an activity into a habit, though the exact timeframe can vary from person to person. Tracking your habits can help you become more aware of your actions and work towards the goal of making them a natural part of your daily life for a healthier and more productive lifestyle.",
     "noHabits": "You don't have any habits yet. Create one!",
+    "namePlaceholder": "E.g: John, Jane",
     "selectLanguage": "Select Language",
-    "welcome": "Welcome"
+    "spanish": "SP",
+    "welcome": "Welcome",
+    "welcomeMessage": "Welcome to your new habit-building and life transformation assistant. To get started, all we need is your name.",
+    "writeName": "Write your name here"
   }
 }

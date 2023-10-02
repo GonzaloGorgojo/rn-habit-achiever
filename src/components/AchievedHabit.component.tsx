@@ -1,9 +1,15 @@
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { achievedHabitStyle } from './achievedHabit.style';
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from 'react-native';
 import allHabits from '@src/database/habits.json';
 import { IHabit } from '@src/common/interfaces/dbInterfaces';
 import { commonStyle } from '@src/common/style/commonStyle.style';
 import { useTranslation } from 'react-i18next';
+import { Colors } from '@src/common/constants/colors';
 
 const AchievedHabit = () => {
   const { t } = useTranslation();
@@ -16,7 +22,7 @@ const AchievedHabit = () => {
       <Text style={commonStyle.title}>{t('achievedHabits')}</Text>
       <View style={commonStyle.straightLine} />
       {achievedHabits?.length <= 0 ? (
-        <Text>{t('noHabits')}s</Text>
+        <Text>{t('noHabits')}</Text>
       ) : (
         <FlatList
           style={commonStyle.flatlist}
@@ -36,5 +42,16 @@ const AchievedHabit = () => {
     </View>
   );
 };
+
+export const achievedHabitStyle = StyleSheet.create({
+  container: {
+    width: '95%',
+    alignItems: 'center',
+    height: '40%',
+    marginBottom: 10,
+    backgroundColor: Colors.mainColor,
+    borderRadius: 10,
+  },
+});
 
 export default AchievedHabit;

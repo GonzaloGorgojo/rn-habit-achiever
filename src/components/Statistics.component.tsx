@@ -1,8 +1,10 @@
 import { commonStyle } from '@src/common/style/commonStyle.style';
-import { Text, View } from 'react-native';
-import { statisticsStyle } from './statistics.style';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import allHabits from '@src/database/habits.json';
 import { useTranslation } from 'react-i18next';
+import { Colors } from '@src/common/constants/colors';
+
+const isAndroid = Platform.OS === 'android' ? true : false;
 
 const Statistics = () => {
   const { t } = useTranslation();
@@ -43,5 +45,35 @@ const Statistics = () => {
     </View>
   );
 };
+
+export const statisticsStyle = StyleSheet.create({
+  container: {
+    width: '95%',
+    alignItems: 'center',
+    height: '20%',
+    backgroundColor: Colors.mainColor,
+    borderRadius: 10,
+    marginBottom: isAndroid ? 10 : 0,
+  },
+  rowView: {
+    flexDirection: 'row',
+    marginVertical: isAndroid ? 8 : 5,
+  },
+  columnView: {
+    width: '40%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: Colors.black,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    backgroundColor: Colors.white,
+    paddingBottom: 2,
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
 
 export default Statistics;

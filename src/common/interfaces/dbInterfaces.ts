@@ -1,3 +1,5 @@
+import { StyleProp, ViewStyle } from 'react-native';
+
 export interface IUser {
   id: number;
   name: string;
@@ -17,4 +19,8 @@ export interface IHabit {
 export interface ICreateHabit {
   habit: string;
   goal: number;
+}
+
+export interface ICommonProps {
+  style?: StyleProp<ViewStyle>;
 }

@@ -1,6 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { currentHabitStyle } from './currentHabit.style';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import allHabits from '@src/database/habits.json';
 import { IHabit } from '@src/common/interfaces/dbInterfaces';
 import { calculatePercentage } from '@src/common/helpers/calculation.helper';
@@ -65,5 +70,17 @@ const CurrentHabit = () => {
     </View>
   );
 };
+
+export const currentHabitStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '95%',
+    alignItems: 'center',
+    height: '40%',
+    marginVertical: 10,
+    backgroundColor: Colors.mainColor,
+    borderRadius: 10,
+  },
+});
 
 export default CurrentHabit;

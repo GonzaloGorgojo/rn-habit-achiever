@@ -1,10 +1,11 @@
 import { Colors } from '@src/common/constants/colors';
 import { Link, Stack } from 'expo-router';
-import { TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import users from '@src/database/users.json';
 import { IUser } from '@src/common/interfaces/dbInterfaces';
 import { useTranslation } from 'react-i18next';
+import SwitchSelectorComponent from '@src/components/SwitchSelector.component';
 
 export default function Layout() {
   const { t } = useTranslation();
@@ -45,7 +46,9 @@ export default function Layout() {
         options={{
           title: 'Habit Achiever',
           headerLeft: undefined,
-          headerRight: undefined,
+          headerRight: () => (
+            <SwitchSelectorComponent style={styles.selectorStyle} />
+          ),
         }}
       />
       <Stack.Screen
@@ -66,3 +69,9 @@ export default function Layout() {
     </Stack>
   );
 }
+
+export const styles = StyleSheet.create({
+  selectorStyle: {
+    width: 80,
+  },
+});
