@@ -3,6 +3,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 export interface IUser {
   id: number;
   name: string;
+  active: number;
 }
 
 export interface IHabit {

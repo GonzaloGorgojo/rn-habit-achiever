@@ -47,7 +47,7 @@ export const achievedHabitStyle = StyleSheet.create({
   container: {
     width: '95%',
     alignItems: 'center',
-    height: '40%',
+    height: '35%',
     marginBottom: 10,
     backgroundColor: Colors.mainColor,
     borderRadius: 10,

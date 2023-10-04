@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import '@src/languages/i18n';
 import { Colors } from '@src/common/constants/colors';
@@ -7,11 +7,12 @@ import CurrentHabit from '@src/components/CurrentHabit.component';
 import AchievedHabit from '@src/components/AchievedHabit.component';
 import Statistics from '@src/components/Statistics.component';
 import { Redirect } from 'expo-router';
-import { IUser } from '@src/common/interfaces/dbInterfaces';
-import users from '@src/database/users.json';
+import { useActiveUserContext } from '@src/context/userContext';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
-  const activeUser: IUser = users.find((user) => user.active) as IUser;
+  const { t } = useTranslation();
+  const { activeUser } = useActiveUserContext();
 
   if (!activeUser) {
     return <Redirect href="/loginScreen" />;
@@ -20,6 +21,9 @@ export default function HomeScreen() {
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
       <StatusBar style="dark" />
+      <Text style={styles.userTitle}>
+        {t('welcome')} {activeUser.name}!
+      </Text>
       <CurrentHabit />
       <AchievedHabit />
       <Statistics />
@@ -32,5 +36,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: Colors.black,
+  },
+  userTitle: {
+    color: Colors.mainColor,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 5,
   },
 });

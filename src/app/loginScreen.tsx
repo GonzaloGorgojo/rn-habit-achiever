@@ -1,6 +1,8 @@
 import { Colors } from '@src/common/constants/colors';
 import { commonStyle } from '@src/common/style/commonStyle.style';
+import { database } from '@src/database/database';
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   StyleSheet,
@@ -13,6 +15,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
+  const [userName, setUserName] = useState<string>('');
+
+  const createUser = (name: string) => {
+    database.insertUser(name);
+    setUserName('');
+    alert('user was created');
+  };
 
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
@@ -25,11 +34,13 @@ export default function LoginScreen() {
         <TextInput
           placeholder={t('namePlaceholder')}
           style={commonStyle.textInput}
+          value={userName}
+          onChangeText={(txt) => setUserName(txt)}
         />
       </View>
 
       <TouchableOpacity
-        onPress={() => alert('User created')}
+        onPress={() => createUser(userName)}
         style={styles.creeateUserButton}
       >
         <Text>{t('createUser')}</Text>

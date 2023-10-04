@@ -73,13 +73,12 @@ const CurrentHabit = () => {
 
 export const currentHabitStyle = StyleSheet.create({
   container: {
-    flex: 1,
     width: '95%',
     alignItems: 'center',
-    height: '40%',
     marginVertical: 10,
     backgroundColor: Colors.mainColor,
     borderRadius: 10,
+    height: '35%',
   },
 });
 

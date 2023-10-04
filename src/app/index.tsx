@@ -1,14 +1,22 @@
 import '@src/languages/i18n';
-import users from '@src/database/users.json';
-import { IUser } from '@src/common/interfaces/dbInterfaces';
 import { Redirect } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import useDatabase from '@src/hooks/useDatabase';
+import { useActiveUserContext } from '@src/context/userContext';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 export default function Main() {
-  const activeUser: IUser = users.find((user) => user.active) as IUser;
+  const isDBLoadingComplete = useDatabase();
+  const { activeUser } = useActiveUserContext();
 
-  if (activeUser) {
-    return <Redirect href="/homeScreen" />;
-  } else {
-    return <Redirect href="/loginScreen" />;
+  if (isDBLoadingComplete) {
+    SplashScreen.hideAsync();
+    if (activeUser) {
+      return <Redirect href="/homeScreen" />;
+    } else {
+      return <Redirect href="/loginScreen" />;
+    }
   }
 }

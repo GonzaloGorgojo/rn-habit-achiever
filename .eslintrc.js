@@ -37,6 +37,8 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react-native/no-unused-styles': 2,
     'react-native/no-inline-styles': 2,
+    '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/no-misused-promises': 'error',
     'react-native/no-color-literals': 2,
     'react-native/no-raw-text': 2,
     'react-native/no-single-element-style-arrays': 2,
@@ -60,4 +62,4 @@ module.exports = {
       version: 'detect',
     },
   },
-}
+};
