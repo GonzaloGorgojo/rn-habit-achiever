@@ -6,25 +6,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import allHabits from '@src/database/habits.json';
 import { IHabit } from '@src/common/interfaces/dbInterfaces';
 import { calculatePercentage } from '@src/common/helpers/calculation.helper';
 import { commonStyle } from '@src/common/style/commonStyle.style';
 import { Colors } from '@src/common/constants/colors';
 import { useTranslation } from 'react-i18next';
+import { useUserHabitsContext } from '@src/context/habitsContext';
+import { useActiveUserContext } from '@src/context/userContext';
 
 const CurrentHabit = () => {
   const { t } = useTranslation();
-  const habits: IHabit[] = allHabits.filter(
-    (habit) => habit.userId === 1 && habit.habitReached === false,
-  ) as IHabit[];
+  const { activeUser } = useActiveUserContext();
+  const { userHabits } = useUserHabitsContext();
+
+  console.log('current habits:', userHabits);
+  const habits: IHabit[] = userHabits.filter(
+    (habit) => habit.userId === activeUser?.id && habit.habitReached === 0,
+  );
 
   return (
     <View style={currentHabitStyle.container}>
       <Text style={commonStyle.title}>{t('currentHabits')}</Text>
       <View style={commonStyle.straightLine} />
       {habits?.length <= 0 ? (
-        <Text style={commonStyle.habitText}>{t('noHabits')}</Text>
+        <Text style={currentHabitStyle.noHabitsText}>{t('noHabits')}</Text>
       ) : (
         <FlatList
           style={commonStyle.flatlist}
@@ -75,10 +80,17 @@ export const currentHabitStyle = StyleSheet.create({
   container: {
     width: '95%',
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 5,
+    marginBottom: 10,
     backgroundColor: Colors.mainColor,
     borderRadius: 10,
     height: '35%',
+  },
+  noHabitsText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: Colors.black,
+    marginVertical: 10,
   },
 });
 

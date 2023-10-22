@@ -25,6 +25,7 @@ const SwitchSelectorComponent = ({ style }: ICommonProps) => {
         buttonColor={Colors.mainColor}
         borderColor={'black'}
         buttonMargin={1}
+        height={35}
       />
     </View>
   );

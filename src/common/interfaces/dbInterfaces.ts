@@ -7,14 +7,14 @@ export interface IUser {
 }
 
 export interface IHabit {
-  id: number;
+  id?: number;
   userId: number;
   habit: string;
   consecutiveDaysCompleted: number;
   maxConsecutiveDaysCompleted: number;
-  habitReached: boolean;
+  habitReached: number; //act as boolean = 0(false) or 1(true)
   goal: number;
-  ask: boolean;
+  ask: number; //act as boolean = 0(false) or 1(true)
 }
 
 export interface ICreateHabit {

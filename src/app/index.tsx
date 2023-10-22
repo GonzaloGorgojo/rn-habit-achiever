@@ -19,4 +19,9 @@ export default function Main() {
       return <Redirect href="/loginScreen" />;
     }
   }
+
+  if (!isDBLoadingComplete) {
+    //Todo: add loading screen
+    return null;
+  }
 }

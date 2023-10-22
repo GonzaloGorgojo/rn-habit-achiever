@@ -2,9 +2,13 @@
   "translation": {
     "achievedHabits": "Achieved Habits",
     "addHabitQuestion": "What habit would you like to achieve?",
+    "cancel": "Cancel",
     "confirm": "Confirm",
     "confirmUser": "The name of the user will be:",
     "createHabitButton": "Create Habit",
+    "confirmHabitName": "The habit will be:",
+    "confirmHabitDays": "& the goal will be:",
+    "create": "Create",
     "createUser": "Create User",
     "currentHabits": "Habits in progress",
     "days": "days",

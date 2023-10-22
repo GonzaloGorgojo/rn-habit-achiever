@@ -3,6 +3,7 @@ import { Colors } from '../constants/colors';
 
 export const commonStyle = StyleSheet.create({
   title: {
+    marginTop: 1,
     fontSize: 18,
     fontWeight: 'bold',
   },

@@ -1,7 +1,8 @@
 import { Colors } from '@src/common/constants/colors';
-import { ICreateHabit } from '@src/common/interfaces/dbInterfaces';
+import { ICreateHabit, IHabit } from '@src/common/interfaces/dbInterfaces';
 import { useState } from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -13,19 +14,81 @@ import { Ionicons } from '@expo/vector-icons';
 import Slider from 'react-native-a11y-slider';
 import { commonStyle } from '@src/common/style/commonStyle.style';
 import { useTranslation } from 'react-i18next';
+import { useUserHabitsContext } from '@src/context/habitsContext';
+import { useActiveUserContext } from '@src/context/userContext';
+import { router, useNavigation } from 'expo-router';
+import { calculateHabitStats } from '@src/common/helpers/habit.helper';
+import { StackActions } from '@react-navigation/native';
+import { database } from '@src/database/database';
 
 export default function Modal() {
+  const navigation = useNavigation();
   const { t } = useTranslation();
+  const [borderColor, setBorderColor] = useState<string>(Colors.grey);
+  const { activeUser } = useActiveUserContext();
+  const { setUserHabits } = useUserHabitsContext();
   const [newHabit, setNewHabit] = useState<ICreateHabit>({
     habit: '',
     goal: 21,
   });
 
+  if (!activeUser) {
+    const resetAction = StackActions.popToTop();
+    navigation.dispatch(resetAction);
+    return router.replace('/loginScreen');
+  }
+
+  const createHabit = async (habitName: string, habitDays: number) => {
+    if (habitName.trim().length <= 0 || isNaN(habitDays)) {
+      setBorderColor(Colors.errorColor);
+    } else {
+      setBorderColor(Colors.grey);
+      await confirmHabitAlert(habitName, habitDays);
+      const newHabit: IHabit = calculateHabitStats(
+        { habit: habitName, goal: habitDays },
+        activeUser.id,
+      );
+      await database.insertUserHabit(newHabit);
+      const dbUserHabits = await database.getUserHabits(activeUser.id);
+      setUserHabits(dbUserHabits);
+      router.replace('/homeScreen');
+    }
+    setNewHabit({ habit: '', goal: 21 });
+  };
+
+  const confirmHabitAlert = async (habitName: string, habitDays: number) =>
+    new Promise((resolve) => {
+      Alert.alert(
+        `${t('confirm')}`,
+        `${t('confirmHabitName')} ${habitName}  ${t(
+          'confirmHabitDays',
+        )} ${habitDays}`,
+        [
+          {
+            style: 'default',
+            text: `${t('create')}`,
+            onPress: () => {
+              resolve('YES');
+            },
+          },
+          {
+            style: 'cancel',
+            text: `${t('cancel')}`,
+            onPress: () => resolve('Cancel Pressed'),
+          },
+        ],
+        {
+          cancelable: true,
+          onDismiss: () => {},
+        },
+      );
+    });
+
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.modal}>
       <Text style={commonStyle.label}>{t('addHabitQuestion')} </Text>
       <TextInput
-        style={commonStyle.textInput}
+        style={{ ...commonStyle.textInput, borderColor: borderColor }}
         value={newHabit.habit}
         maxLength={40}
         placeholder={t('exampleHabit')}
@@ -50,7 +113,7 @@ export default function Modal() {
       </View>
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => alert(JSON.stringify(newHabit))}
+        onPress={() => void createHabit(newHabit.habit, newHabit.goal)}
       >
         <Text style={commonStyle.label}>{t('createHabitButton')}</Text>
       </TouchableOpacity>

@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
-import { IUser } from '@src/common/interfaces/dbInterfaces';
+import { IHabit, IUser } from '@src/common/interfaces/dbInterfaces';
 
 export function openDatabase() {
   if (Platform.OS === 'web') {
@@ -48,6 +48,10 @@ const setupDatabase = async () => {
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, active boolean);',
         );
+        console.log('Creating habits table in case not exists');
+        tx.executeSql(
+          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, FOREIGN KEY (userId) REFERENCES users(id));',
+        );
         resolve(true);
       } catch (error) {
         console.error(error, 'Error creating users table');
@@ -57,26 +61,38 @@ const setupDatabase = async () => {
   });
 };
 
-const getActiveUser = (setActiveUser: (user: IUser) => void) => {
-  try {
+//User operations
+const getActiveUser = async (): Promise<IUser | null> => {
+  return new Promise((resolve, reject) => {
     db.transaction((tx) => {
-      tx.executeSql(
-        'select * from users where (active) = ? limit 1;',
-        [1],
-        (_, { rows: { _array } }) => {
-          if (_array.length > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const activeUser: IUser = _array.find(
-              (user: IUser) => user.active === 1,
-            );
-            setActiveUser(activeUser);
-          }
-        },
-      );
+      try {
+        console.log('Getting active user');
+        tx.executeSql(
+          'select * from users where (active) = ? limit 1;',
+          [1],
+          (_, { rows: { _array } }) => {
+            if (_array.length > 0) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              const activeUser: IUser = _array.find(
+                (user: IUser) => user.active === 1,
+              );
+              if (activeUser) {
+                console.log('Found active user: ', activeUser.name);
+                resolve(activeUser);
+              } else {
+                console.log('No active user found');
+                resolve(null);
+              }
+            }
+            resolve(null);
+          },
+        );
+      } catch (error) {
+        console.error(error, 'error getting active user');
+        reject(error);
+      }
     });
-  } catch (error) {
-    console.error('error getting active user:', error);
-  }
+  });
 };
 
 const insertUser = (userName: string) => {
@@ -106,10 +122,64 @@ const deleteUser = (userId: number) => {
   }
 };
 
+//Habits operations
+const getUserHabits = async (userId: number): Promise<IHabit[] | []> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      try {
+        console.log('Getting user habits');
+        tx.executeSql(
+          'select * from habits where (userId) = ?;',
+          [userId],
+          (_, { rows: { _array } }) => {
+            if (_array.length > 0) {
+              resolve(_array);
+            }
+            resolve([]);
+          },
+        );
+      } catch (error) {
+        console.error(error, 'error getting user habits');
+        reject(error);
+      }
+    });
+  });
+};
+
+const insertUserHabit = async (habit: IHabit) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      try {
+        console.log('Inserting user habit');
+        tx.executeSql(
+          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask) values (?, ?, ?, ?, ?, ?, ?)',
+          [
+            habit.userId,
+            habit.habit,
+            habit.consecutiveDaysCompleted,
+            habit.maxConsecutiveDaysCompleted,
+            habit.habitReached,
+            habit.goal,
+            habit.ask,
+          ],
+          (_, { rows: { _array } }) => {
+            resolve(_array);
+          },
+        );
+      } catch (error) {
+        console.error(error, 'error inserting user habit');
+        reject(error);
+      }
+    });
+  });
+};
+
 export const database = {
   setupDatabase,
   dropDatabaseTablesAsync,
   getActiveUser,
   insertUser,
   deleteUser,
+  getUserHabits,
+  insertUserHabit,
 };
