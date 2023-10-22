@@ -31,7 +31,7 @@ const dropDatabaseTablesAsync = async () => {
           resolve(result);
         },
         (_, error): boolean => {
-          console.log('error dropping users table');
+          console.error('error dropping users table');
           reject(error);
           return true;
         },
@@ -50,14 +50,14 @@ const setupDatabase = async () => {
         );
         resolve(true);
       } catch (error) {
-        console.log(error, 'Error creating users table');
+        console.error(error, 'Error creating users table');
         reject(error);
       }
     });
   });
 };
 
-const getActiveUser = (setActiveUser: (array: IUser) => void) => {
+const getActiveUser = (setActiveUser: (user: IUser) => void) => {
   try {
     db.transaction((tx) => {
       tx.executeSql(
@@ -66,28 +66,43 @@ const getActiveUser = (setActiveUser: (array: IUser) => void) => {
         (_, { rows: { _array } }) => {
           if (_array.length > 0) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const activeUserName: IUser = _array.find(
+            const activeUser: IUser = _array.find(
               (user: IUser) => user.active === 1,
             );
-            setActiveUser(activeUserName);
+            setActiveUser(activeUser);
           }
         },
       );
     });
   } catch (error) {
-    console.log('error getting active user:', error);
+    console.error('error getting active user:', error);
   }
 };
 
 const insertUser = (userName: string) => {
   try {
+    //delete users from table
+    db.transaction((tx) => {
+      tx.executeSql('delete from users');
+    });
+
     db.transaction((tx) => {
       tx.executeSql('insert into users (name, active) values (?, 1)', [
         userName,
       ]);
     });
   } catch (error) {
-    console.log('error inserting user:', error);
+    console.error('error inserting user:', error);
+  }
+};
+
+const deleteUser = (userId: number) => {
+  try {
+    db.transaction((tx) => {
+      tx.executeSql('delete from users where id = ?', [userId]);
+    });
+  } catch (error) {
+    console.error('error deleting user:', error);
   }
 };
 
@@ -96,4 +111,5 @@ export const database = {
   dropDatabaseTablesAsync,
   getActiveUser,
   insertUser,
+  deleteUser,
 };

@@ -1,10 +1,13 @@
 import { Colors } from '@src/common/constants/colors';
 import { commonStyle } from '@src/common/style/commonStyle.style';
+import { useActiveUserContext } from '@src/context/userContext';
 import { database } from '@src/database/database';
+import { Redirect, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -16,11 +19,49 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function LoginScreen() {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string>('');
+  const [borderColor, setBorderColor] = useState<string>(Colors.grey);
+  const { activeUser, setActiveUser } = useActiveUserContext();
 
-  const createUser = (name: string) => {
-    database.insertUser(name);
+  if (activeUser) {
+    <Redirect href="/homeScreen" />;
+  }
+
+  const confirmUserAlert = async (name: string) =>
+    new Promise((resolve) => {
+      Alert.alert(
+        `${t('confirm')}`,
+        `${t('confirmUser')} ${name}`,
+        [
+          {
+            text: 'ok',
+            onPress: () => {
+              database.insertUser(name);
+              database.getActiveUser(setActiveUser);
+              resolve('YES');
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => resolve('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ],
+        {
+          cancelable: true,
+          onDismiss: () => {},
+        },
+      );
+    });
+
+  const createUser = async (name: string) => {
+    if (name.trim().length <= 0) {
+      setBorderColor(Colors.errorColor);
+    } else {
+      setBorderColor(Colors.grey);
+      await confirmUserAlert(name);
+      router.replace('/');
+    }
     setUserName('');
-    alert('user was created');
   };
 
   return (
@@ -33,14 +74,14 @@ export default function LoginScreen() {
         <Text style={commonStyle.label}>{t('writeName')}</Text>
         <TextInput
           placeholder={t('namePlaceholder')}
-          style={commonStyle.textInput}
+          style={[commonStyle.textInput, { borderColor: borderColor }]}
           value={userName}
           onChangeText={(txt) => setUserName(txt)}
         />
       </View>
 
       <TouchableOpacity
-        onPress={() => createUser(userName)}
+        onPress={() => void createUser(userName)}
         style={styles.creeateUserButton}
       >
         <Text>{t('createUser')}</Text>

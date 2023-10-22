@@ -1,11 +1,59 @@
+import { StackActions } from '@react-navigation/native';
 import { Colors } from '@src/common/constants/colors';
 import SwitchSelectorComponent from '@src/components/SwitchSelector.component';
+import { useActiveUserContext } from '@src/context/userContext';
+import { database } from '@src/database/database';
+import { Redirect, router, useNavigation } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsModal() {
   const { t } = useTranslation();
+  const { activeUser, setActiveUser } = useActiveUserContext();
+  const navigation = useNavigation();
+
+  if (!activeUser) {
+    return <Redirect href="/" />;
+  }
+
+  const deleteUserAlert = async () =>
+    new Promise((resolve) => {
+      Alert.alert(
+        `${t('confirm')}`,
+        `${t('deleteUserConfirmation')} ${activeUser.name}`,
+        [
+          {
+            text: 'ok',
+            onPress: () => {
+              database.deleteUser(activeUser.id);
+              setActiveUser(null);
+              resolve('YES');
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => resolve('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ],
+        {
+          cancelable: true,
+          onDismiss: () => {},
+        },
+      );
+    });
+
+  const deleteUser = async () => {
+    try {
+      await deleteUserAlert();
+      const resetAction = StackActions.popToTop();
+      navigation.dispatch(resetAction);
+      router.replace('/');
+    } catch (error) {
+      console.error('error: ', error);
+    }
+  };
 
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
@@ -14,7 +62,10 @@ export default function SettingsModal() {
         <SwitchSelectorComponent style={styles.switch} />
       </View>
 
-      <TouchableOpacity style={styles.deleteButton}>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => void deleteUser()}
+      >
         <Text style={styles.buttonText}>{t('deleteUserButton')}</Text>
       </TouchableOpacity>
     </SafeAreaView>

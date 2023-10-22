@@ -7,7 +7,7 @@ type ActiveUserContextType = {
 
 export interface IUserContext {
   activeUser: IUser | null;
-  setActiveUser: (u: IUser) => void;
+  setActiveUser: (u: IUser | null) => void;
 }
 
 export const ActiveUserContext = createContext<IUserContext>({
