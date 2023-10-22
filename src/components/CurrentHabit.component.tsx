@@ -19,7 +19,6 @@ const CurrentHabit = () => {
   const { activeUser } = useActiveUserContext();
   const { userHabits } = useUserHabitsContext();
 
-  console.log('current habits:', userHabits);
   const habits: IHabit[] = userHabits.filter(
     (habit) => habit.userId === activeUser?.id && habit.habitReached === 0,
   );
@@ -29,7 +28,7 @@ const CurrentHabit = () => {
       <Text style={commonStyle.title}>{t('currentHabits')}</Text>
       <View style={commonStyle.straightLine} />
       {habits?.length <= 0 ? (
-        <Text style={currentHabitStyle.noHabitsText}>{t('noHabits')}</Text>
+        <Text style={commonStyle.noHabitsText}>{t('noHabits')}</Text>
       ) : (
         <FlatList
           style={commonStyle.flatlist}
@@ -85,12 +84,6 @@ export const currentHabitStyle = StyleSheet.create({
     backgroundColor: Colors.mainColor,
     borderRadius: 10,
     height: '35%',
-  },
-  noHabitsText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: Colors.black,
-    marginVertical: 10,
   },
 });
 

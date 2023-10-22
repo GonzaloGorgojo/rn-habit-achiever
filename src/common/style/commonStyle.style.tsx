@@ -46,4 +46,10 @@ export const commonStyle = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 5,
   },
+  noHabitsText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: Colors.black,
+    margin: 10,
+  },
 });

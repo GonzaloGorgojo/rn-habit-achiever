@@ -23,7 +23,7 @@ const dropDatabaseTablesAsync = async () => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'drop table users',
+        'drop table IF EXISTS users',
         [],
         (_, result) => {
           console.log('users table dropped');
@@ -32,6 +32,21 @@ const dropDatabaseTablesAsync = async () => {
         },
         (_, error): boolean => {
           console.error('error dropping users table');
+          reject(error);
+          return true;
+        },
+      );
+
+      tx.executeSql(
+        'drop table IF EXISTS habits',
+        [],
+        (_, result) => {
+          console.log('habits table dropped');
+          console.log(result);
+          resolve(result);
+        },
+        (_, error): boolean => {
+          console.error('error dropping habits table');
           reject(error);
           return true;
         },

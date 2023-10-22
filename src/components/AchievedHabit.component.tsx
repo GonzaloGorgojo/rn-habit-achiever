@@ -5,24 +5,23 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
-import allHabits from '@src/database/habits.json';
-import { IHabit } from '@src/common/interfaces/dbInterfaces';
 import { commonStyle } from '@src/common/style/commonStyle.style';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '@src/common/constants/colors';
+import { useUserHabitsContext } from '@src/context/habitsContext';
 
 const AchievedHabit = () => {
   const { t } = useTranslation();
-  const achievedHabits = allHabits.filter(
-    (habit) => habit.habitReached === true,
-  ) as IHabit[];
+  const { userHabits } = useUserHabitsContext();
+
+  const achievedHabits = userHabits.filter((habit) => habit.habitReached === 1);
 
   return (
     <View style={achievedHabitStyle.container}>
       <Text style={commonStyle.title}>{t('achievedHabits')}</Text>
       <View style={commonStyle.straightLine} />
       {achievedHabits?.length <= 0 ? (
-        <Text>{t('noHabits')}</Text>
+        <Text style={commonStyle.noHabitsText}>{t('noAchievedHabits')}</Text>
       ) : (
         <FlatList
           style={commonStyle.flatlist}
