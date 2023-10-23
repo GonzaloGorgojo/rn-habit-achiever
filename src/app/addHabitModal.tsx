@@ -1,5 +1,5 @@
 import { Colors } from '@src/common/constants/colors';
-import { ICreateHabit, IHabit } from '@src/common/interfaces/dbInterfaces';
+import { ICreateHabit, IHabitInput } from '@src/common/interfaces/dbInterfaces';
 import { useState } from 'react';
 import {
   Alert,
@@ -43,15 +43,17 @@ export default function Modal() {
       setBorderColor(Colors.errorColor);
     } else {
       setBorderColor(Colors.grey);
-      await confirmHabitAlert(habitName, habitDays);
-      const newHabit: IHabit = calculateHabitStats(
-        { habit: habitName, goal: habitDays },
-        activeUser.id,
-      );
-      await database.insertUserHabit(newHabit);
-      const dbUserHabits = await database.getUserHabits(activeUser.id);
-      setUserHabits(dbUserHabits);
-      router.replace('/homeScreen');
+      const userSelection = await confirmHabitAlert(habitName, habitDays);
+      if (userSelection) {
+        const newHabit: IHabitInput = calculateHabitStats(
+          { habit: habitName, goal: habitDays },
+          activeUser.id,
+        );
+        await database.insertUserHabit(newHabit);
+        const dbUserHabits = await database.getUserHabits(activeUser.id);
+        setUserHabits(dbUserHabits);
+        router.replace('/homeScreen');
+      }
     }
     setNewHabit({ habit: '', goal: 21 });
   };
@@ -68,13 +70,13 @@ export default function Modal() {
             style: 'default',
             text: `${t('create')}`,
             onPress: () => {
-              resolve('YES');
+              resolve(true);
             },
           },
           {
             style: 'cancel',
             text: `${t('cancel')}`,
-            onPress: () => resolve('Cancel Pressed'),
+            onPress: () => resolve(false),
           },
         ],
         {

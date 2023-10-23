@@ -2,6 +2,7 @@
   "translation": {
     "achievedHabits": "Hábitos conseguidos",
     "addHabitQuestion": "¿Qué hábito quieres conseguir?",
+    "ask": "Deberiamos Preguntar",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
     "confirmUser": "El nombre del nuevo usuario sera:",
@@ -12,20 +13,29 @@
     "createUser": "Crear Usuario",
     "currentHabits": "Hábitos en construccion",
     "days": "días",
+    "daysCompleted": "Racha",
+    "delete": "Borrar",
+    "deleteHabitConfirmation": "Se borrara el habito:",
     "deleteUserButton": "Borrar Usuario",
     "deleteUserConfirmation": "Se borrara el usuario:",
     "english": "IN",
     "exampleHabit": "Ejemplo: Beber 2 litros de agua al día",
     "goal": "Objetivo (días)",
+    "habit": "Hábito",
+    "habitReached": "Hábito conseguido",
     "habitsStatistics": "Estadísticas de hábitos",
     "information": "Un hábito es un comportamiento repetitivo o rutina que realizas casi automáticamente, a menudo sin pensar conscientemente en ello. Los hábitos pueden ser tanto positivos como negativos, moldeando nuestra vida cotidiana y nuestros resultados a largo plazo. A menudo se dice que se necesitan alrededor de 21 a 66 días de práctica constante para convertir una actividad en un hábito, aunque el plazo exacto puede variar de persona a persona. Llevar un registro de tus hábitos puede ayudarte a tomar conciencia de tus acciones y trabajar hacia el objetivo de convertirlos en una parte natural de tu vida diaria para llevar un estilo de vida más saludable y productivo.",
+    "maxDaysCompleted": "Racha máxima",
+    "no": "No",
     "namePlaceholder": "Ejemplo: Juan, Maria",
     "noAchievedHabits": "No tienes hábitos conseguidos. Consigue uno y lo veras aqui.",
     "noHabits": "No tienes hábitos en construcción. Crea uno para visualizarlo aquí.",
+    "selectedGoal": "Objetivo seleccionado",
     "selectLanguage": "Seleccione idioma",
     "spanish": "ES",
     "welcome": "Bienvenido",
     "welcomeMessage": "Bienvenido a tu nuevo asistente para construir hábitos y transformar tu vida. Para comenzar, solo necesitamos tu nombre.",
-    "writeName": "Escribe tu nombre"
+    "writeName": "Escribe tu nombre",
+    "yes": "Si"
   }
 }

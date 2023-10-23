@@ -3,11 +3,10 @@ import { StyleProp, ViewStyle } from 'react-native';
 export interface IUser {
   id: number;
   name: string;
-  active: number;
+  active: number; //act as boolean = 0(false) or 1(true)
 }
 
-export interface IHabit {
-  id?: number;
+export interface IHabitInput {
   userId: number;
   habit: string;
   consecutiveDaysCompleted: number;
@@ -15,6 +14,10 @@ export interface IHabit {
   habitReached: number; //act as boolean = 0(false) or 1(true)
   goal: number;
   ask: number; //act as boolean = 0(false) or 1(true)
+}
+
+export interface IHabit extends IHabitInput {
+  id: number;
 }
 
 export interface ICreateHabit {

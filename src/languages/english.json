@@ -2,6 +2,7 @@
   "translation": {
     "achievedHabits": "Achieved Habits",
     "addHabitQuestion": "What habit would you like to achieve?",
+    "ask": "Should we ask",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "confirmUser": "The name of the user will be:",
@@ -12,20 +13,29 @@
     "createUser": "Create User",
     "currentHabits": "Habits in progress",
     "days": "days",
+    "daysCompleted": "Streak",
+    "delete": "Delete",
     "deleteUserButton": "Delete User",
+    "deleteHabitConfirmation": "Habit that will be deleted:",
     "deleteUserConfirmation": "User will be deleted",
     "exampleHabit": "E.g: Reading, sleeping early.",
     "english": "EN",
     "goal": "Goal (days)",
+    "habit": "Habit",
+    "habitReached": "Habit Reached",
     "habitsStatistics": "Habits Statistics",
     "information": "A habit is a repetitive behavior or routine that you perform almost automatically, often without consciously thinking about it. Habits can be both positive and negative, shaping our daily lives and long-term outcomes. It's often said that it takes around 21 to 66 days of consistent practice to turn an activity into a habit, though the exact timeframe can vary from person to person. Tracking your habits can help you become more aware of your actions and work towards the goal of making them a natural part of your daily life for a healthier and more productive lifestyle.",
+    "maxDaysCompleted": "Max Streak",
+    "no": "No",
     "noAchievedHabits": "You don't have any achieved habits yet. Achieve one and it will appear here!",
     "noHabits": "You don't have any habits yet. Create one!",
     "namePlaceholder": "E.g: John, Jane",
+    "selectedGoal": "Selected Goal",
     "selectLanguage": "Select Language",
     "spanish": "SP",
     "welcome": "Welcome",
     "welcomeMessage": "Welcome to your new habit-building and life transformation assistant. To get started, all we need is your name.",
-    "writeName": "Write your name here"
+    "writeName": "Write your name here",
+    "yes": "Yes"
   }
 }

@@ -13,6 +13,7 @@ import { Colors } from '@src/common/constants/colors';
 import { useTranslation } from 'react-i18next';
 import { useUserHabitsContext } from '@src/context/habitsContext';
 import { useActiveUserContext } from '@src/context/userContext';
+import { router } from 'expo-router';
 
 const CurrentHabit = () => {
   const { t } = useTranslation();
@@ -22,6 +23,10 @@ const CurrentHabit = () => {
   const habits: IHabit[] = userHabits.filter(
     (habit) => habit.userId === activeUser?.id && habit.habitReached === 0,
   );
+
+  const goToSelectedHabit = (habitId: number) => {
+    router.push({ pathname: '/selectedHabitModal', params: { habitId } });
+  };
 
   return (
     <View style={currentHabitStyle.container}>
@@ -40,7 +45,11 @@ const CurrentHabit = () => {
                 ? Colors.mainColor
                 : Colors.lightYellow;
             return (
-              <TouchableOpacity style={commonStyle.habit} key={item.id}>
+              <TouchableOpacity
+                style={commonStyle.habit}
+                key={item.id}
+                onPress={() => goToSelectedHabit(item.id)}
+              >
                 <View
                   style={{
                     backgroundColor: calculateColor,

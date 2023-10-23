@@ -1,6 +1,10 @@
 import { Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
-import { IHabit, IUser } from '@src/common/interfaces/dbInterfaces';
+import {
+  IHabit,
+  IHabitInput,
+  IUser,
+} from '@src/common/interfaces/dbInterfaces';
 
 export function openDatabase() {
   if (Platform.OS === 'web') {
@@ -161,7 +165,7 @@ const getUserHabits = async (userId: number): Promise<IHabit[] | []> => {
   });
 };
 
-const insertUserHabit = async (habit: IHabit) => {
+const insertUserHabit = async (habit: IHabitInput) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       try {
@@ -189,6 +193,21 @@ const insertUserHabit = async (habit: IHabit) => {
   });
 };
 
+const deleteUserHabit = async (habitId: number) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      try {
+        console.log('Deleting user habit');
+        tx.executeSql('delete from habits where id = ?', [habitId]);
+        resolve(true);
+      } catch (error) {
+        console.error(error, 'error deleting user habit');
+        reject(error);
+      }
+    });
+  });
+};
+
 export const database = {
   setupDatabase,
   dropDatabaseTablesAsync,
@@ -197,4 +216,5 @@ export const database = {
   deleteUser,
   getUserHabits,
   insertUserHabit,
+  deleteUserHabit,
 };

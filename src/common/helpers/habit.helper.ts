@@ -1,10 +1,10 @@
-import { ICreateHabit, IHabit } from '../interfaces/dbInterfaces';
+import { ICreateHabit, IHabitInput } from '../interfaces/dbInterfaces';
 
 export const calculateHabitStats = (
   habitData: ICreateHabit,
   userId: number,
-): IHabit => {
-  const newHabit: IHabit = {
+): IHabitInput => {
+  const newHabit: IHabitInput = {
     userId,
     habit: habitData.habit,
     consecutiveDaysCompleted: 0,

@@ -24,7 +24,7 @@ export default function SettingsModal() {
         `${t('deleteUserConfirmation')} ${activeUser.name}`,
         [
           {
-            text: 'ok',
+            text: `${t('delete')}`,
             onPress: () => {
               database.deleteUser(activeUser.id);
               setActiveUser(null);
@@ -32,7 +32,7 @@ export default function SettingsModal() {
             },
           },
           {
-            text: 'Cancel',
+            text: `${t('cancel')}`,
             onPress: () => resolve('Cancel Pressed'),
             style: 'cancel',
           },
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.black,
     borderWidth: 1,
     position: 'absolute',
-    bottom: 0,
+    bottom: '5%',
   },
   buttonText: {
     color: Colors.white,
