@@ -14,6 +14,8 @@ export interface IHabitInput {
   habitReached: number; //act as boolean = 0(false) or 1(true)
   goal: number;
   ask: number; //act as boolean = 0(false) or 1(true)
+  isTodayCompleted: number; //act as boolean = 0(false) or 1(true)
+  todayDate: string;
 }
 
 export interface IHabit extends IHabitInput {

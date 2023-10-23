@@ -36,12 +36,12 @@ export default function LoginScreen() {
             text: `${t('create')}`,
             onPress: () => {
               database.insertUser(name);
-              resolve('YES');
+              resolve(true);
             },
           },
           {
             text: `${t('cancel')}`,
-            onPress: () => resolve('Cancel Pressed'),
+            onPress: () => resolve(false),
             style: 'cancel',
           },
         ],
@@ -57,10 +57,12 @@ export default function LoginScreen() {
       setBorderColor(Colors.errorColor);
     } else {
       setBorderColor(Colors.grey);
-      await confirmUserAlert(name);
-      const activeUser = await database.getActiveUser();
-      setActiveUser(activeUser);
-      router.replace('/');
+      const userSelection = await confirmUserAlert(name);
+      if (userSelection) {
+        const activeUser = await database.getActiveUser();
+        setActiveUser(activeUser);
+        router.replace('/homeScreen');
+      }
     }
     setUserName('');
   };

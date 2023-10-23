@@ -18,6 +18,7 @@ export function openDatabase() {
   }
 
   const db = SQLite.openDatabase('habitachiever.db');
+  db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () => {});
   return db;
 }
 
@@ -69,7 +70,7 @@ const setupDatabase = async () => {
         );
         console.log('Creating habits table in case not exists');
         tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, FOREIGN KEY (userId) REFERENCES users(id));',
+          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, isTodayCompleted BOOLEAN,todayDate date, CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE);',
         );
         resolve(true);
       } catch (error) {
@@ -171,7 +172,7 @@ const insertUserHabit = async (habit: IHabitInput) => {
       try {
         console.log('Inserting user habit');
         tx.executeSql(
-          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask) values (?, ?, ?, ?, ?, ?, ?)',
+          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask, isTodayCompleted, todayDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             habit.userId,
             habit.habit,
@@ -180,6 +181,8 @@ const insertUserHabit = async (habit: IHabitInput) => {
             habit.habitReached,
             habit.goal,
             habit.ask,
+            habit.isTodayCompleted,
+            habit.todayDate,
           ],
           (_, { rows: { _array } }) => {
             resolve(_array);
@@ -208,6 +211,30 @@ const deleteUserHabit = async (habitId: number) => {
   });
 };
 
+const updateUserHabit = async (habit: IHabit) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      try {
+        console.log('Updating user habit');
+        tx.executeSql(
+          'update habits set consecutiveDaysCompleted = ?, isTodayCompleted = ?, maxConsecutiveDaysCompleted = ?, habitReached = ? where id = ?;',
+          [
+            habit.consecutiveDaysCompleted,
+            habit.isTodayCompleted,
+            habit.maxConsecutiveDaysCompleted,
+            habit.habitReached,
+            habit.id,
+          ],
+        );
+        resolve(true);
+      } catch (error) {
+        console.error(error, 'error updating user habit');
+        reject(error);
+      }
+    });
+  });
+};
+
 export const database = {
   setupDatabase,
   dropDatabaseTablesAsync,
@@ -217,4 +244,5 @@ export const database = {
   getUserHabits,
   insertUserHabit,
   deleteUserHabit,
+  updateUserHabit,
 };

@@ -8,6 +8,7 @@ import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { database } from '@src/database/database';
 import { useActiveUserContext } from '@src/context/userContext';
+import { calculateUpdatedHabitStats } from '@src/common/helpers/habit.helper';
 
 export default function SelectedHabitModal() {
   const { userHabits, setUserHabits } = useUserHabitsContext();
@@ -61,6 +62,16 @@ export default function SelectedHabitModal() {
     }
   };
 
+  const completeHabitOfTheDay = async () => {
+    selectedHabit.consecutiveDaysCompleted += 1;
+    selectedHabit.isTodayCompleted = 1;
+    const calculatedHabit = calculateUpdatedHabitStats(selectedHabit);
+    await database.updateUserHabit(calculatedHabit);
+    const dbUserHabits = await database.getUserHabits(activeUser.id);
+    setUserHabits(dbUserHabits);
+    router.replace('/homeScreen');
+  };
+
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
       <StatusBar style="dark" />
@@ -85,11 +96,19 @@ export default function SelectedHabitModal() {
         <Text style={styles.userTitle}>
           {t('ask')}: {selectedHabit?.ask === 0 ? t('no') : t('yes')}
         </Text>
+        <Text style={styles.userTitle}>
+          {t('isTodayCompleted')}:{' '}
+          {selectedHabit?.isTodayCompleted === 0 ? t('no') : t('yes')}
+        </Text>
+        <Text style={styles.userTitle}>{selectedHabit?.todayDate}</Text>
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.completeButton}>
-          <Text style={styles.buttonText}>Day Completed</Text>
+        <TouchableOpacity
+          style={styles.completeButton}
+          onPress={() => void completeHabitOfTheDay()}
+        >
+          <Text style={styles.buttonText}>{t('completeDayHabit')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
@@ -98,7 +117,7 @@ export default function SelectedHabitModal() {
           }}
           onPress={() => void deleteHabit()}
         >
-          <Text style={styles.buttonText}>Delete Habit</Text>
+          <Text style={styles.buttonText}>{t('deleteHabit')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
