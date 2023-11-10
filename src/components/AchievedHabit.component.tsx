@@ -9,12 +9,20 @@ import { commonStyle } from '@src/common/style/commonStyle.style';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '@src/common/constants/colors';
 import { useUserHabitsContext } from '@src/context/habitsContext';
+import { router } from 'expo-router';
 
 const AchievedHabit = () => {
   const { t } = useTranslation();
   const { userHabits } = useUserHabitsContext();
 
   const achievedHabits = userHabits.filter((habit) => habit.habitReached === 1);
+
+  const goToSelectedHabit = (habitId: number) => {
+    router.push({
+      pathname: '/selectedHabitModal',
+      params: { habitId },
+    });
+  };
 
   return (
     <View style={achievedHabitStyle.container}>
@@ -29,7 +37,11 @@ const AchievedHabit = () => {
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity style={commonStyle.habit} key={item.id}>
+              <TouchableOpacity
+                style={commonStyle.habit}
+                key={item.id}
+                onPress={() => goToSelectedHabit(item.id)}
+              >
                 <Text style={commonStyle.habitText}>
                   {item.habit}: {item.consecutiveDaysCompleted} {t('days')}
                 </Text>

@@ -64,7 +64,7 @@ const CurrentHabit = () => {
                     }%`,
                     top: 0,
                     bottom: 0,
-                    borderRadius: 10,
+                    borderRadius: 9,
                   }}
                 />
                 <Text style={commonStyle.habitText}>

@@ -14,7 +14,7 @@ export const commonStyle = StyleSheet.create({
   habit: {
     alignItems: 'center',
     borderColor: Colors.black,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1.5,
     marginVertical: 3,
     paddingVertical: 2,

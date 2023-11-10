@@ -105,8 +105,13 @@ export default function SelectedHabitModal() {
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          style={styles.completeButton}
+          // eslint-disable-next-line react-native/no-inline-styles
+          style={{
+            ...styles.completeButton,
+            opacity: selectedHabit.isTodayCompleted ? 0.5 : 1,
+          }}
           onPress={() => void completeHabitOfTheDay()}
+          disabled={!!selectedHabit.isTodayCompleted}
         >
           <Text style={styles.buttonText}>{t('completeDayHabit')}</Text>
         </TouchableOpacity>
