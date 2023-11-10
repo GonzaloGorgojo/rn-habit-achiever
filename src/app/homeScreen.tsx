@@ -5,7 +5,7 @@ import '@src/languages/i18n';
 import { Colors } from '@src/common/constants/colors';
 import CurrentHabit from '@src/components/CurrentHabit.component';
 import AchievedHabit from '@src/components/AchievedHabit.component';
-import Statistics from '@src/components/Statistics.component';
+import HabitsGraph from '@src/components/HabitsGraph.component';
 import { Redirect } from 'expo-router';
 import { useActiveUserContext } from '@src/context/userContext';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +26,7 @@ export default function HomeScreen() {
       </Text>
       <CurrentHabit />
       <AchievedHabit />
-      <Statistics />
+      <HabitsGraph />
     </SafeAreaView>
   );
 }

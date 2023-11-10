@@ -92,7 +92,7 @@ export const currentHabitStyle = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: Colors.mainColor,
     borderRadius: 10,
-    height: '35%',
+    height: '30%',
   },
 });
 

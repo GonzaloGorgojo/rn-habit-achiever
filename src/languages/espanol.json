@@ -25,6 +25,7 @@
     "goal": "Objetivo (días)",
     "habit": "Hábito",
     "habitReached": "Hábito conseguido",
+    "habitsGraph": "Días con habitos completados",
     "habitsStatistics": "Estadísticas de hábitos",
     "information": "Un hábito es un comportamiento repetitivo o rutina que realizas casi automáticamente, a menudo sin pensar conscientemente en ello. Los hábitos pueden ser tanto positivos como negativos, moldeando nuestra vida cotidiana y nuestros resultados a largo plazo. A menudo se dice que se necesitan alrededor de 21 a 66 días de práctica constante para convertir una actividad en un hábito, aunque el plazo exacto puede variar de persona a persona. Llevar un registro de tus hábitos puede ayudarte a tomar conciencia de tus acciones y trabajar hacia el objetivo de convertirlos en una parte natural de tu vida diaria para llevar un estilo de vida más saludable y productivo.",
     "isTodayCompleted": "Fue completado hoy",
@@ -36,7 +37,7 @@
     "selectedGoal": "Objetivo seleccionado",
     "selectLanguage": "Seleccione idioma",
     "spanish": "ES",
-    "welcome": "Bienvenido",
+    "welcome": "¡Hola",
     "welcomeMessage": "Bienvenido a tu nuevo asistente para construir hábitos y transformar tu vida. Para comenzar, solo necesitamos tu nombre.",
     "writeName": "Escribe tu nombre",
     "yes": "Si"

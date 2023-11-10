@@ -24,7 +24,7 @@ export const commonStyle = StyleSheet.create({
     shadowRadius: 10,
   },
   straightLine: {
-    width: '50%',
+    width: '70%',
     borderWidth: 0.5,
     borderColor: Colors.black,
   },

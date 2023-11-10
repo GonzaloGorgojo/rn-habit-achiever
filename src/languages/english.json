@@ -25,6 +25,7 @@
     "goal": "Goal (days)",
     "habit": "Habit",
     "habitReached": "Habit Reached",
+    "habitsGraph": "Days with habits completed",
     "habitsStatistics": "Habits Statistics",
     "information": "A habit is a repetitive behavior or routine that you perform almost automatically, often without consciously thinking about it. Habits can be both positive and negative, shaping our daily lives and long-term outcomes. It's often said that it takes around 21 to 66 days of consistent practice to turn an activity into a habit, though the exact timeframe can vary from person to person. Tracking your habits can help you become more aware of your actions and work towards the goal of making them a natural part of your daily life for a healthier and more productive lifestyle.",
     "isTodayCompleted": "Today completed",
@@ -36,7 +37,7 @@
     "selectedGoal": "Selected Goal",
     "selectLanguage": "Select Language",
     "spanish": "SP",
-    "welcome": "Welcome",
+    "welcome": "¡Hi",
     "welcomeMessage": "Welcome to your new habit-building and life transformation assistant. To get started, all we need is your name.",
     "writeName": "Write your name here",
     "yes": "Yes"

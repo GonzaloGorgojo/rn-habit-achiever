@@ -1,4 +1,6 @@
+import dayjs from 'dayjs';
 import { ICreateHabit, IHabit, IHabitInput } from '../interfaces/dbInterfaces';
+import { dateFormat } from '@src/common/constants/commonConstants';
 
 export const calculateHabitStats = (
   habitData: ICreateHabit,
@@ -12,7 +14,7 @@ export const calculateHabitStats = (
     habitReached: 0,
     goal: habitData.goal,
     ask: 0,
-    todayDate: new Date().toISOString(),
+    todayDate: dayjs().format(dateFormat),
     isTodayCompleted: 0,
   };
 
