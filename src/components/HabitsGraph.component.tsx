@@ -4,19 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { Colors } from '@src/common/constants/colors';
 import CalendarHeatmap from 'react-native-calendar-heatmap';
 import { useUserHabitsContext } from '@src/context/habitsContext';
+import dayjs from 'dayjs';
+import dayOfYear from 'dayjs/plugin/dayOfYear';
 
 const isAndroid = Platform.OS === 'android' ? true : false;
+dayjs.extend(dayOfYear);
 
 const HabitsGraph = () => {
   const { t } = useTranslation();
   const { userHabitsDates } = useUserHabitsContext();
 
-  const extractedDates = userHabitsDates.map((habit) => habit.dateCompleted);
-
-  const uniqueDates = Array.from(new Set(extractedDates));
-
-  const formattedDate = uniqueDates.map((date) => {
-    return { date };
+  const extractedDatesValues = userHabitsDates.map((habit) => {
+    return { date: habit.dateCompleted };
   });
 
   return (
@@ -30,12 +29,21 @@ const HabitsGraph = () => {
         contentContainerStyle={statisticsStyle.graphScrollable}
       >
         <CalendarHeatmap
-          endDate={new Date()}
-          numDays={365}
+          endDate={dayjs().toDate()}
+          numDays={364}
           gutterSize={2}
-          colorArray={[Colors.black, Colors.lightYellow]}
-          values={formattedDate}
-          onPress={() => alert('Dalma ese dia besaste a malbec')}
+          colorArray={[
+            Colors.black,
+            Colors.lightOrange,
+            Colors.lightYellow,
+            Colors.lighterMainColor,
+            Colors.lightMainColor,
+          ]}
+          values={extractedDatesValues}
+          onPress={(value: number) => {
+            console.log(value);
+            // console.log(dayjs().dayOfYear(value).format(dateFormat));
+          }}
         />
       </ScrollView>
     </View>
