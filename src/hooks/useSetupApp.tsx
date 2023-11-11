@@ -3,7 +3,7 @@ import { useActiveUserContext } from '@src/context/userContext';
 import { database } from '@src/database/database';
 import { useEffect, useState } from 'react';
 
-export default function useDatabase() {
+export default function useSetupApp() {
   const [isDBLoadingComplete, setDBLoadingComplete] = useState<boolean>(false);
   const { setActiveUser } = useActiveUserContext();
   const { setUserHabits, setUserHabitsDates } = useUserHabitsContext();
@@ -11,6 +11,7 @@ export default function useDatabase() {
   useEffect(() => {
     const loadDataAsync = async () => {
       try {
+        console.log('Setting Up the Database now...');
         //Line below is only for testing when you want to reset the database.
         // await database.dropDatabaseTablesAsync();
         await database.setupDatabase();
