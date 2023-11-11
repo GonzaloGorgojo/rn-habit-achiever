@@ -30,3 +30,10 @@ export interface ICreateHabit {
 export interface ICommonProps {
   style?: StyleProp<ViewStyle>;
 }
+
+export interface IHabitDate {
+  id: number;
+  userId: number;
+  habitId: number;
+  dateCompleted: string;
+}

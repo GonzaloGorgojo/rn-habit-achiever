@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 export default function useDatabase() {
   const [isDBLoadingComplete, setDBLoadingComplete] = useState<boolean>(false);
   const { setActiveUser } = useActiveUserContext();
-  const { setUserHabits } = useUserHabitsContext();
+  const { setUserHabits, setUserHabitsDates } = useUserHabitsContext();
 
   useEffect(() => {
     const loadDataAsync = async () => {
@@ -19,6 +19,13 @@ export default function useDatabase() {
         if (activeUser) {
           const userHabits = await database.getUserHabits(activeUser.id);
           setUserHabits(userHabits);
+
+          if (userHabits) {
+            const userHabitsDates = await database.getUserHabitsDates(
+              activeUser.id,
+            );
+            setUserHabitsDates(userHabitsDates);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -27,7 +34,7 @@ export default function useDatabase() {
       }
     };
     loadDataAsync();
-  }, [setActiveUser, setUserHabits]);
+  }, [setActiveUser, setUserHabits, setUserHabitsDates]);
 
   return isDBLoadingComplete;
 }

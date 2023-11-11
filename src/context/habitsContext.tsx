@@ -1,4 +1,4 @@
-import { IHabit } from '@src/common/interfaces/dbInterfaces';
+import { IHabit, IHabitDate } from '@src/common/interfaces/dbInterfaces';
 import { createContext, useContext, useState } from 'react';
 
 type HabitsContextType = {
@@ -8,18 +8,25 @@ type HabitsContextType = {
 export interface IHabitsContext {
   userHabits: IHabit[] | [];
   setUserHabits: (h: IHabit[] | []) => void;
+  userHabitsDates: IHabitDate[] | [];
+  setUserHabitsDates: (h: IHabitDate[] | []) => void;
 }
 
 export const userHabitsContext = createContext<IHabitsContext>({
   userHabits: [],
   setUserHabits: () => [],
+  userHabitsDates: [],
+  setUserHabitsDates: () => [],
 });
 
 export const UserHabitsContextProvider = ({ children }: HabitsContextType) => {
   const [userHabits, setUserHabits] = useState<IHabit[] | []>([]);
+  const [userHabitsDates, setUserHabitsDates] = useState<IHabitDate[] | []>([]);
 
   return (
-    <userHabitsContext.Provider value={{ userHabits, setUserHabits }}>
+    <userHabitsContext.Provider
+      value={{ userHabits, setUserHabits, userHabitsDates, setUserHabitsDates }}
+    >
       {children}
     </userHabitsContext.Provider>
   );

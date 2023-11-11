@@ -26,6 +26,7 @@ export const calculateUpdatedHabitStats = (habitData: IHabit) => {
     habitData.maxConsecutiveDaysCompleted <= habitData.consecutiveDaysCompleted
       ? habitData.consecutiveDaysCompleted
       : habitData.maxConsecutiveDaysCompleted;
+
   const updatedHabit: IHabit = {
     id: habitData.id,
     userId: habitData.userId,

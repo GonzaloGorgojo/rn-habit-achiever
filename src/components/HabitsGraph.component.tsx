@@ -9,10 +9,14 @@ const isAndroid = Platform.OS === 'android' ? true : false;
 
 const HabitsGraph = () => {
   const { t } = useTranslation();
-  const { userHabits } = useUserHabitsContext();
+  const { userHabitsDates } = useUserHabitsContext();
 
-  const dates = userHabits.map((habit) => {
-    return { date: habit.todayDate };
+  const extractedDates = userHabitsDates.map((habit) => habit.dateCompleted);
+
+  const uniqueDates = Array.from(new Set(extractedDates));
+
+  const formattedDate = uniqueDates.map((date) => {
+    return { date };
   });
 
   return (
@@ -27,10 +31,10 @@ const HabitsGraph = () => {
       >
         <CalendarHeatmap
           endDate={new Date()}
-          numDays={363}
+          numDays={365}
           gutterSize={2}
           colorArray={[Colors.black, Colors.lightYellow]}
-          values={dates}
+          values={formattedDate}
           onPress={() => alert('Dalma ese dia besaste a malbec')}
         />
       </ScrollView>

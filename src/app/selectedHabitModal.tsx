@@ -11,7 +11,8 @@ import { useActiveUserContext } from '@src/context/userContext';
 import { calculateUpdatedHabitStats } from '@src/common/helpers/habit.helper';
 
 export default function SelectedHabitModal() {
-  const { userHabits, setUserHabits } = useUserHabitsContext();
+  const { userHabits, setUserHabits, setUserHabitsDates } =
+    useUserHabitsContext();
   const { habitId } = useLocalSearchParams();
   const { activeUser } = useActiveUserContext();
   const { t } = useTranslation();
@@ -56,8 +57,15 @@ export default function SelectedHabitModal() {
     const userSelection = await deleteHabitAlert();
     if (userSelection) {
       await database.deleteUserHabit(selectedHabit.id);
+
       const dbUserHabits = await database.getUserHabits(activeUser.id);
       setUserHabits(dbUserHabits);
+
+      const dbUserHabitsDates = await database.getUserHabitsDates(
+        activeUser.id,
+      );
+      setUserHabitsDates(dbUserHabitsDates);
+
       router.replace('/homeScreen');
     }
   };
@@ -65,10 +73,16 @@ export default function SelectedHabitModal() {
   const completeHabitOfTheDay = async () => {
     selectedHabit.consecutiveDaysCompleted += 1;
     selectedHabit.isTodayCompleted = 1;
+
     const calculatedHabit = calculateUpdatedHabitStats(selectedHabit);
+
     await database.updateUserHabit(calculatedHabit);
     const dbUserHabits = await database.getUserHabits(activeUser.id);
     setUserHabits(dbUserHabits);
+
+    const dbUserHabitsDates = await database.getUserHabitsDates(activeUser.id);
+    setUserHabitsDates(dbUserHabitsDates);
+
     router.replace('/homeScreen');
   };
 
@@ -100,7 +114,6 @@ export default function SelectedHabitModal() {
           {t('isTodayCompleted')}:{' '}
           {selectedHabit?.isTodayCompleted === 0 ? t('no') : t('yes')}
         </Text>
-        <Text style={styles.userTitle}>{selectedHabit?.todayDate}</Text>
       </View>
 
       <View style={styles.buttonsContainer}>

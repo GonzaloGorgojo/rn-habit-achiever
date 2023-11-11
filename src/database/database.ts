@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import {
   IHabit,
+  IHabitDate,
   IHabitInput,
   IUser,
 } from '@src/common/interfaces/dbInterfaces';
@@ -71,6 +72,10 @@ const setupDatabase = async () => {
         console.log('Creating habits table in case not exists');
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, isTodayCompleted BOOLEAN,todayDate date, CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE);',
+        );
+        console.log('Creating habits dates table in case not exists');
+        tx.executeSql(
+          'CREATE TABLE IF NOT EXISTS habits_dates (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habitId INTEGER, dateCompleted date, CONSTRAINT fk_habit FOREIGN KEY (habitId) REFERENCES habits(id) ON DELETE CASCADE);',
         );
         resolve(true);
       } catch (error) {
@@ -226,9 +231,39 @@ const updateUserHabit = async (habit: IHabit) => {
             habit.id,
           ],
         );
+        console.log('Inserting user habit date');
+        tx.executeSql(
+          'insert into habits_dates (userId, habitId, dateCompleted) values (?, ?, ?)',
+          [habit.userId, habit.id, habit.todayDate],
+        );
         resolve(true);
       } catch (error) {
         console.error(error, 'error updating user habit');
+        reject(error);
+      }
+    });
+  });
+};
+
+const getUserHabitsDates = async (
+  userId: number,
+): Promise<IHabitDate[] | []> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      try {
+        console.log('Getting user habits dates');
+        tx.executeSql(
+          'select * from habits_dates where (userId) = ?;',
+          [userId],
+          (_, { rows: { _array } }) => {
+            if (_array.length > 0) {
+              resolve(_array);
+            }
+            resolve([]);
+          },
+        );
+      } catch (error) {
+        console.error(error, 'error getting user habits');
         reject(error);
       }
     });
@@ -245,4 +280,5 @@ export const database = {
   insertUserHabit,
   deleteUserHabit,
   updateUserHabit,
+  getUserHabitsDates,
 };
