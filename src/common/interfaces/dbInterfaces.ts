@@ -14,6 +14,8 @@ export interface IHabitInput {
   habitReached: number; //act as boolean = 0(false) or 1(true)
   goal: number;
   ask: number; //act as boolean = 0(false) or 1(true)
+  notificationTime: string | null;
+  notificationId: string | null;
   isTodayCompleted: number; //act as boolean = 0(false) or 1(true)
   todayDate: string;
 }
@@ -25,6 +27,7 @@ export interface IHabit extends IHabitInput {
 export interface ICreateHabit {
   habit: string;
   goal: number;
+  notificationTime: string | null;
 }
 
 export interface ICommonProps {

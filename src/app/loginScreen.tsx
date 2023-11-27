@@ -74,7 +74,9 @@ export default function LoginScreen() {
       <Text style={styles.welcomeText}>{t('welcomeMessage')}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={commonStyle.label}>{t('writeName')}</Text>
+        <Text style={{ ...commonStyle.label, color: Colors.black }}>
+          {t('writeName')}
+        </Text>
         <TextInput
           placeholder={t('namePlaceholder')}
           style={[commonStyle.textInput, { borderColor: borderColor }]}

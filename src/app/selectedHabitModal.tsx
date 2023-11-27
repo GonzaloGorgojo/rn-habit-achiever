@@ -108,7 +108,10 @@ export default function SelectedHabitModal() {
           {selectedHabit?.habitReached === 0 ? t('no') : t('yes')}
         </Text>
         <Text style={styles.userTitle}>
-          {t('ask')}: {selectedHabit?.ask === 0 ? t('no') : t('yes')}
+          {t('ask2')}: {selectedHabit?.ask === 0 ? t('no') : t('yes')}
+        </Text>
+        <Text style={styles.userTitle}>
+          {t('notificationTime')}: {selectedHabit?.notificationTime ?? ''}
         </Text>
         <Text style={styles.userTitle}>
           {t('isTodayCompleted')}:{' '}
@@ -163,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 5,
+    textAlign: 'justify',
   },
   completeButton: {
     width: '45%',

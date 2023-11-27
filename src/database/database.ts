@@ -57,6 +57,21 @@ const dropDatabaseTablesAsync = async () => {
           return true;
         },
       );
+
+      tx.executeSql(
+        'drop table IF EXISTS habits_dates',
+        [],
+        (_, result) => {
+          console.log('habits_dates table dropped');
+          console.log(result);
+          resolve(result);
+        },
+        (_, error): boolean => {
+          console.error('error dropping habits_dates table');
+          reject(error);
+          return true;
+        },
+      );
     });
   });
 };
@@ -71,7 +86,7 @@ const setupDatabase = async () => {
         );
         console.log('Creating habits table in case not exists');
         tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, isTodayCompleted BOOLEAN,todayDate date, CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE);',
+          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, notificationTime TEXT, notificationId TEXT, isTodayCompleted BOOLEAN,todayDate date, CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE);',
         );
         console.log('Creating habits dates table in case not exists');
         tx.executeSql(
@@ -177,7 +192,7 @@ const insertUserHabit = async (habit: IHabitInput) => {
       try {
         console.log('Inserting user habit');
         tx.executeSql(
-          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask, isTodayCompleted, todayDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask, notificationTime, notificationId, isTodayCompleted, todayDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             habit.userId,
             habit.habit,
@@ -186,6 +201,8 @@ const insertUserHabit = async (habit: IHabitInput) => {
             habit.habitReached,
             habit.goal,
             habit.ask,
+            habit.notificationTime,
+            habit.notificationId,
             habit.isTodayCompleted,
             habit.todayDate,
           ],

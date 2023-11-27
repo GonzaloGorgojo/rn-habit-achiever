@@ -36,6 +36,8 @@ export const commonStyle = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 3,
+    textAlign: 'justify',
+    color: Colors.mainColor,
   },
   textInput: {
     width: '80%',

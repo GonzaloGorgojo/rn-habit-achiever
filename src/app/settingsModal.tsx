@@ -5,8 +5,16 @@ import { useActiveUserContext } from '@src/context/userContext';
 import { database } from '@src/database/database';
 import { Redirect, router, useNavigation } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
 
 export default function SettingsModal() {
   const { t } = useTranslation();
@@ -55,11 +63,23 @@ export default function SettingsModal() {
     }
   };
 
+  const turnOffAllNotifications = async () => {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  };
+
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
       <View style={styles.languageContainer}>
         <Text style={styles.languageText}>{t('selectLanguage')}</Text>
         <SwitchSelectorComponent style={styles.switch} />
+      </View>
+      <View style={styles.languageContainer}>
+        <Text style={styles.languageText}>{t('cancelNotifications')}</Text>
+        <Button
+          title={t('cancel')}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onPress={async () => await turnOffAllNotifications()}
+        />
       </View>
 
       <TouchableOpacity

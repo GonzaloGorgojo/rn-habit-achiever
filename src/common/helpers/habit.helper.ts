@@ -5,6 +5,8 @@ import { dateFormat } from '@src/common/constants/commonConstants';
 export const calculateHabitStats = (
   habitData: ICreateHabit,
   userId: number,
+  ask: number,
+  notificationId: string | null,
 ): IHabitInput => {
   const newHabit: IHabitInput = {
     userId,
@@ -13,7 +15,9 @@ export const calculateHabitStats = (
     maxConsecutiveDaysCompleted: 0,
     habitReached: 0,
     goal: habitData.goal,
-    ask: 0,
+    ask: ask,
+    notificationTime: habitData.notificationTime,
+    notificationId: notificationId ?? null,
     todayDate: dayjs().format(dateFormat),
     isTodayCompleted: 0,
   };
@@ -28,16 +32,9 @@ export const calculateUpdatedHabitStats = (habitData: IHabit) => {
       : habitData.maxConsecutiveDaysCompleted;
 
   const updatedHabit: IHabit = {
-    id: habitData.id,
-    userId: habitData.userId,
-    habit: habitData.habit,
-    goal: habitData.goal,
-    ask: habitData.ask,
+    ...habitData,
     habitReached: habitData.consecutiveDaysCompleted >= habitData.goal ? 1 : 0,
-    consecutiveDaysCompleted: habitData.consecutiveDaysCompleted,
     maxConsecutiveDaysCompleted: maxConsecutiveDayCalculation,
-    isTodayCompleted: habitData.isTodayCompleted,
-    todayDate: habitData.todayDate,
   };
 
   return updatedHabit;

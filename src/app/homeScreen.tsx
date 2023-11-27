@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { StatusBar } from 'expo-status-bar';
-import { Alert, Linking, StyleSheet, Text } from 'react-native';
+import { Alert, Button, Linking, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import '@src/languages/i18n';
 import { Colors } from '@src/common/constants/colors';
@@ -11,6 +11,25 @@ import { Redirect } from 'expo-router';
 import { useActiveUserContext } from '@src/context/userContext';
 import { useTranslation } from 'react-i18next';
 import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  // eslint-disable-next-line @typescript-eslint/require-await
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+const getScheduledNotifications = async () => {
+  const notifications = await Notifications.getAllScheduledNotificationsAsync();
+  console.log(notifications);
+  console.log(notifications.length);
+};
+
+const cancelScheduledNotification = async (identifer: string) => {
+  await Notifications.cancelScheduledNotificationAsync(identifer);
+};
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -71,9 +90,22 @@ export default function HomeScreen() {
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
       <StatusBar style="dark" />
-      <Text style={styles.userTitle}>
-        {t('welcome')} {activeUser.name}!
-      </Text>
+      <Button
+        title="Press to get scheduled notifications"
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onPress={async () => {
+          await getScheduledNotifications();
+        }}
+      />
+      <Button
+        title="Press to cancel a notification"
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onPress={async () => {
+          await cancelScheduledNotification(
+            '497377ab-33c7-459b-9abf-ae96708fbc58',
+          );
+        }}
+      />
       <CurrentHabit />
       <AchievedHabit />
       <HabitsGraph />
@@ -86,11 +118,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: Colors.black,
-  },
-  userTitle: {
-    color: Colors.mainColor,
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 5,
   },
 });
