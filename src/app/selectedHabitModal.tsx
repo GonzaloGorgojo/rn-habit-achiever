@@ -4,11 +4,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import '@src/languages/i18n';
 import { Colors } from '@src/common/constants/colors';
 import { useUserHabitsContext } from '@src/context/habitsContext';
-import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import {
+  Link,
+  Redirect,
+  Stack,
+  router,
+  useLocalSearchParams,
+} from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { database } from '@src/database/database';
 import { useActiveUserContext } from '@src/context/userContext';
 import { calculateUpdatedHabitStats } from '@src/common/helpers/habit.helper';
+import { Feather } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
+import { IHabit } from '@src/common/interfaces/dbInterfaces';
 
 export default function SelectedHabitModal() {
   const { userHabits, setUserHabits, setUserHabitsDates } =
@@ -17,7 +26,7 @@ export default function SelectedHabitModal() {
   const { activeUser } = useActiveUserContext();
   const { t } = useTranslation();
 
-  const selectedHabit = userHabits.find(
+  const selectedHabit: IHabit | undefined = userHabits.find(
     (habit) => habit.id === Number(habitId),
   );
 
@@ -56,14 +65,20 @@ export default function SelectedHabitModal() {
   const deleteHabit = async () => {
     const userSelection = await deleteHabitAlert();
     if (userSelection) {
+      if (selectedHabit.notificationId) {
+        await Notifications.cancelScheduledNotificationAsync(
+          selectedHabit.notificationId,
+        );
+      }
+
       await database.deleteUserHabit(selectedHabit.id);
 
       const dbUserHabits = await database.getUserHabits(activeUser.id);
-      setUserHabits(dbUserHabits);
 
       const dbUserHabitsDates = await database.getUserHabitsDates(
         activeUser.id,
       );
+      setUserHabits(dbUserHabits);
       setUserHabitsDates(dbUserHabitsDates);
 
       router.replace('/homeScreen');
@@ -76,7 +91,7 @@ export default function SelectedHabitModal() {
 
     const calculatedHabit = calculateUpdatedHabitStats(selectedHabit);
 
-    await database.updateUserHabit(calculatedHabit);
+    await database.completeUserHabit(calculatedHabit);
     const dbUserHabits = await database.getUserHabits(activeUser.id);
     setUserHabits(dbUserHabits);
 
@@ -89,6 +104,28 @@ export default function SelectedHabitModal() {
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
       <StatusBar style="dark" />
+      <Stack.Screen
+        options={{
+          presentation: 'modal',
+          headerLeft: undefined,
+          headerRight: () => (
+            <TouchableOpacity>
+              <Link
+                href={{
+                  pathname: '/addHabitModal',
+                  params: {
+                    habit: JSON.stringify(selectedHabit),
+                    isEdit: String(true),
+                  },
+                }}
+              >
+                <Feather name="edit" size={26} color="black" />
+              </Link>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
       <View style={styles.selectedHabitContainer}>
         <Text style={styles.userTitle}>
           {t('habit')}: {selectedHabit?.habit}
@@ -111,7 +148,7 @@ export default function SelectedHabitModal() {
           {t('ask2')}: {selectedHabit?.ask === 0 ? t('no') : t('yes')}
         </Text>
         <Text style={styles.userTitle}>
-          {t('notificationTime')}: {selectedHabit?.notificationTime ?? ''}
+          {t('notificationTime')}: {selectedHabit?.notificationTime ?? '-'}
         </Text>
         <Text style={styles.userTitle}>
           {t('isTodayCompleted')}:{' '}

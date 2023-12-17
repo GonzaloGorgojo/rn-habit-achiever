@@ -22,6 +22,8 @@
     "deleteHabitConfirmation": "Se borrara el habito:",
     "deleteUserButton": "Borrar Usuario",
     "deleteUserConfirmation": "Se borrara el usuario:",
+    "edit": "Editar",
+    "editHabitButton": "Editar Hábito",
     "english": "IN",
     "exampleHabit": "Ejemplo: Beber 2 litros de agua al día",
     "goal": "Objetivo (días)",

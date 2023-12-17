@@ -218,6 +218,37 @@ const insertUserHabit = async (habit: IHabitInput) => {
   });
 };
 
+const updateUserHabit = async (habit: IHabit) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      try {
+        console.log('Updating user habit');
+        tx.executeSql(
+          'update habits set userId = ?, habit = ?, consecutiveDaysCompleted = ?, maxConsecutiveDaysCompleted = ?, habitReached = ?, goal = ?, ask = ?, notificationTime = ?, notificationId = ?, isTodayCompleted = ?, todayDate = ? where id = ?;',
+          [
+            habit.userId,
+            habit.habit,
+            habit.consecutiveDaysCompleted,
+            habit.maxConsecutiveDaysCompleted,
+            habit.habitReached,
+            habit.goal,
+            habit.ask,
+            habit.notificationTime,
+            habit.notificationId,
+            habit.isTodayCompleted,
+            habit.todayDate,
+            habit.id,
+          ],
+        );
+        resolve(true);
+      } catch (error) {
+        console.error(error, 'error updating user habit');
+        reject(error);
+      }
+    });
+  });
+};
+
 const deleteUserHabit = async (habitId: number) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
@@ -233,7 +264,7 @@ const deleteUserHabit = async (habitId: number) => {
   });
 };
 
-const updateUserHabit = async (habit: IHabit) => {
+const completeUserHabit = async (habit: IHabit) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       try {
@@ -295,7 +326,8 @@ export const database = {
   deleteUser,
   getUserHabits,
   insertUserHabit,
-  deleteUserHabit,
   updateUserHabit,
+  deleteUserHabit,
+  completeUserHabit,
   getUserHabitsDates,
 };

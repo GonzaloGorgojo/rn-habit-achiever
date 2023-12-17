@@ -27,10 +27,6 @@ const getScheduledNotifications = async () => {
   console.log(notifications.length);
 };
 
-const cancelScheduledNotification = async (identifer: string) => {
-  await Notifications.cancelScheduledNotificationAsync(identifer);
-};
-
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { activeUser, askForPermission, setAskForPermission } =
@@ -97,15 +93,7 @@ export default function HomeScreen() {
           await getScheduledNotifications();
         }}
       />
-      <Button
-        title="Press to cancel a notification"
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onPress={async () => {
-          await cancelScheduledNotification(
-            '497377ab-33c7-459b-9abf-ae96708fbc58',
-          );
-        }}
-      />
+
       <CurrentHabit />
       <AchievedHabit />
       <HabitsGraph />

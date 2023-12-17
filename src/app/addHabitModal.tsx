@@ -1,5 +1,10 @@
 import { Colors } from '@src/common/constants/colors';
-import { ICreateHabit, IHabitInput } from '@src/common/interfaces/dbInterfaces';
+import {
+  ICreateHabit,
+  IHabit,
+  IHabitInput,
+  IHabitNotification,
+} from '@src/common/interfaces/dbInterfaces';
 import { useState } from 'react';
 import {
   Alert,
@@ -17,8 +22,11 @@ import { commonStyle } from '@src/common/style/commonStyle.style';
 import { useTranslation } from 'react-i18next';
 import { useUserHabitsContext } from '@src/context/habitsContext';
 import { useActiveUserContext } from '@src/context/userContext';
-import { router, useNavigation } from 'expo-router';
-import { calculateHabitStats } from '@src/common/helpers/habit.helper';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import {
+  calculateNewHabitStats,
+  calculateUpdateHabitStats,
+} from '@src/common/helpers/habit.helper';
 import { StackActions } from '@react-navigation/native';
 import { database } from '@src/database/database';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -30,14 +38,29 @@ export default function Modal() {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { activeUser } = useActiveUserContext();
+  const { habit, isEdit } = useLocalSearchParams();
   const { setUserHabits } = useUserHabitsContext();
+
   const [borderColor, setBorderColor] = useState<string>(Colors.lightMainColor);
+
+  const habitToEdit: IHabit | null = habit
+    ? (JSON.parse(habit as string) as IHabit)
+    : null;
+
   const [newHabit, setNewHabit] = useState<ICreateHabit>({
-    habit: '',
-    goal: 21,
-    notificationTime: null,
+    habit: habitToEdit?.habit ?? '',
+    goal: habitToEdit?.goal ?? 21,
   });
-  const [isEnabled, setIsEnabled] = useState<boolean>(false);
+
+  const [habitNotification, setHabitNotification] =
+    useState<IHabitNotification>({
+      time: habitToEdit?.notificationTime ?? null,
+      id: habitToEdit?.notificationId ?? null,
+    });
+
+  const [isEnabled, setIsEnabled] = useState<boolean>(
+    habitToEdit?.ask ? true : false,
+  );
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   if (!activeUser) {
@@ -45,18 +68,6 @@ export default function Modal() {
     navigation.dispatch(resetAction);
     return router.replace('/loginScreen');
   }
-
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-
-    if (!isEnabled) {
-      setIsVisible(true);
-      setNewHabit({
-        ...newHabit,
-        notificationTime: null,
-      });
-    }
-  };
 
   const createHabit = async () => {
     if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
@@ -67,16 +78,19 @@ export default function Modal() {
       const userSelection = await confirmHabitAlert();
 
       if (userSelection) {
-        const notificationID =
-          isEnabled && newHabit.notificationTime
-            ? await schedulePushNotification(newHabit.notificationTime)
+        const notificationId =
+          isEnabled && habitNotification.time
+            ? await schedulePushNotification(habitNotification.time)
             : null;
 
-        const calculatedHabit: IHabitInput = calculateHabitStats(
+        const notificationTime = isEnabled ? habitNotification.time : null;
+
+        const calculatedHabit: IHabitInput = calculateNewHabitStats(
           newHabit,
           activeUser.id,
-          isEnabled && newHabit.notificationTime ? 1 : 0,
-          notificationID,
+          isEnabled && habitNotification.time ? 1 : 0,
+          notificationId,
+          notificationTime,
         );
 
         await database.insertUserHabit(calculatedHabit);
@@ -90,8 +104,48 @@ export default function Modal() {
     setNewHabit({
       habit: '',
       goal: 21,
-      notificationTime: null,
     });
+  };
+
+  const editHabit = async () => {
+    if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
+      setBorderColor(Colors.errorColor);
+    } else {
+      setBorderColor(Colors.grey);
+
+      const userSelection = await confirmHabitAlert();
+
+      if (userSelection && habitToEdit) {
+        if (habitToEdit.notificationId) {
+          await Notifications.cancelScheduledNotificationAsync(
+            habitToEdit.notificationId,
+          );
+        }
+
+        const notificationId =
+          isEnabled && habitNotification.time
+            ? await schedulePushNotification(habitNotification.time)
+            : null;
+
+        const notificationTime = isEnabled ? habitNotification.time : null;
+
+        const calculatedHabit: IHabit = calculateUpdateHabitStats(
+          habitToEdit,
+          newHabit,
+          activeUser.id,
+          isEnabled && habitNotification.time ? 1 : 0,
+          notificationId,
+          notificationTime,
+        );
+
+        await database.updateUserHabit(calculatedHabit);
+
+        const dbUserHabits = await database.getUserHabits(activeUser.id);
+        setUserHabits(dbUserHabits);
+
+        router.replace('/homeScreen');
+      }
+    }
   };
 
   const confirmHabitAlert = async () =>
@@ -104,7 +158,7 @@ export default function Modal() {
         [
           {
             style: 'default',
-            text: `${t('create')}`,
+            text: `${!isEdit ? t('create') : t('edit')}`,
             onPress: () => {
               resolve(true);
             },
@@ -138,6 +192,13 @@ export default function Modal() {
       });
 
     return notificationIdentifier;
+  };
+
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => !previousState);
+    if (!isEnabled) {
+      setIsVisible(true);
+    }
   };
 
   return (
@@ -176,12 +237,10 @@ export default function Modal() {
             onValueChange={toggleSwitch}
             value={isEnabled}
           />
-          {isEnabled && newHabit.notificationTime ? (
+          {isEnabled && habitNotification.time ? (
             <View style={styles.timeContainer}>
               <Text style={commonStyle.label}>{t('selectedTime')} </Text>
-              <Text style={commonStyle.label}>
-                {newHabit.notificationTime}{' '}
-              </Text>
+              <Text style={commonStyle.label}>{habitNotification.time}</Text>
             </View>
           ) : null}
         </View>
@@ -191,9 +250,9 @@ export default function Modal() {
           visible={isVisible}
           setIsVisible={setIsVisible}
           onConfirm={(pickedDuration) => {
-            setNewHabit({
-              ...newHabit,
-              notificationTime: formatTime(pickedDuration),
+            setHabitNotification({
+              ...habitNotification,
+              time: formatTime(pickedDuration),
             });
             setIsVisible(false);
           }}
@@ -220,7 +279,7 @@ export default function Modal() {
               markerColor={Colors.mainColor}
               min={21}
               max={66}
-              values={[]}
+              values={[newHabit.goal]}
               onChange={(val: number[]) =>
                 setNewHabit({ ...newHabit, goal: val[0] })
               }
@@ -228,15 +287,25 @@ export default function Modal() {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={() => void createHabit()}
-        >
-          <Text style={{ ...commonStyle.label, color: Colors.black }}>
-            {t('createHabitButton')}
-          </Text>
-        </TouchableOpacity>
-
+        {!isEdit ? (
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={() => void createHabit()}
+          >
+            <Text style={{ ...commonStyle.label, color: Colors.black }}>
+              {t('createHabitButton')}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={() => void editHabit()}
+          >
+            <Text style={{ ...commonStyle.label, color: Colors.black }}>
+              {t('editHabitButton')}
+            </Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.informativeContainer}>
           <Ionicons
             name="information-circle-outline"

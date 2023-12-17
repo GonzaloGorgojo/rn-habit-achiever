@@ -1,7 +1,7 @@
 import { Colors } from '@src/common/constants/colors';
 import { Link, Stack } from 'expo-router';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { AntDesign, Feather } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import SwitchSelectorComponent from '@src/components/SwitchSelector.component';
 import { ActiveUserContextProvider } from '@src/context/userContext';
 import { UserHabitsContextProvider } from '@src/context/habitsContext';
@@ -62,18 +62,6 @@ export default function Layout() {
               presentation: 'modal',
               headerLeft: undefined,
               headerRight: undefined,
-            }}
-          />
-          <Stack.Screen
-            name="selectedHabitModal"
-            options={{
-              presentation: 'modal',
-              headerLeft: undefined,
-              headerRight: () => (
-                <TouchableOpacity>
-                  <Feather name="edit" size={26} color="black" />
-                </TouchableOpacity>
-              ),
             }}
           />
         </Stack>

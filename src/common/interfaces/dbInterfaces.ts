@@ -27,7 +27,6 @@ export interface IHabit extends IHabitInput {
 export interface ICreateHabit {
   habit: string;
   goal: number;
-  notificationTime: string | null;
 }
 
 export interface ICommonProps {
@@ -39,4 +38,9 @@ export interface IHabitDate {
   userId: number;
   habitId: number;
   dateCompleted: string;
+}
+
+export interface IHabitNotification {
+  time: string | null;
+  id: string | null;
 }
