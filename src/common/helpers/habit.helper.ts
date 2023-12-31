@@ -1,6 +1,12 @@
 import dayjs from 'dayjs';
-import { ICreateHabit, IHabit, IHabitInput } from '../interfaces/dbInterfaces';
 import { dateFormat } from '@src/common/constants/commonConstants';
+
+import {
+  ICreateHabit,
+  IHabit,
+  IHabitDate,
+  IHabitInput,
+} from '../interfaces/dbInterfaces';
 
 export const calculateNewHabitStats = (
   habitData: ICreateHabit,
@@ -19,8 +25,6 @@ export const calculateNewHabitStats = (
     ask: ask,
     notificationTime: notificationTime,
     notificationId: notificationId,
-    todayDate: dayjs().format(dateFormat),
-    isTodayCompleted: 0,
   };
 
   return newHabit;
@@ -45,15 +49,23 @@ export const calculateUpdateHabitStats = (
     ask: ask,
     notificationTime: notificationTime,
     notificationId: notificationId,
-    todayDate: dayjs().format(dateFormat),
-    isTodayCompleted: oldData.isTodayCompleted,
   };
 
   return updatedHabit;
 };
 
-export const calculateUpdatedHabitStats = (habitData: IHabit) => {
+export const calculateCompletedHabitStats = (
+  habitData: IHabit,
+  habitDates: IHabitDate[] | [],
+): IHabit => {
+  const isNextDayResult = isNextDay(habitDates);
+
+  habitData.consecutiveDaysCompleted = isNextDayResult
+    ? habitData.consecutiveDaysCompleted + 1
+    : 1;
+
   const maxConsecutiveDayCalculation =
+    isNextDayResult &&
     habitData.maxConsecutiveDaysCompleted <= habitData.consecutiveDaysCompleted
       ? habitData.consecutiveDaysCompleted
       : habitData.maxConsecutiveDaysCompleted;
@@ -65,4 +77,45 @@ export const calculateUpdatedHabitStats = (habitData: IHabit) => {
   };
 
   return updatedHabit;
+};
+
+const isNextDay = (habitDates: IHabitDate[] | []): boolean => {
+  try {
+    if (habitDates && habitDates.length > 0) {
+      // Compare if today is the next day from any of the habit dates
+      const today = dayjs();
+      const isImmediateNextDay = habitDates.some((date) =>
+        today.isSame(dayjs(date.dateCompleted).add(1, 'day'), 'day'),
+      );
+      return isImmediateNextDay;
+    }
+
+    // If there are no habit dates, consider it as the next day
+    return true;
+  } catch (error) {
+    console.error('Error checking if today is the next day:', error);
+    return false;
+  }
+};
+
+export const isTodayAmongHabitDates = (
+  habitDates: IHabitDate[] | [],
+): boolean => {
+  try {
+    if (habitDates && habitDates.length > 0) {
+      // Check if today's date is among the habit dates
+      const today = dayjs().format(dateFormat);
+      const isTodayAmongDates = habitDates.some(
+        (habitDate) => habitDate.dateCompleted === today,
+      );
+
+      return isTodayAmongDates;
+    }
+
+    // If there are no habit dates, consider it as today not being among dates
+    return false;
+  } catch (error) {
+    console.error('Error checking if today is among habit dates:', error);
+    return false;
+  }
 };

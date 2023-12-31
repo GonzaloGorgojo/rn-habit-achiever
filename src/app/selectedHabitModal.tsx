@@ -14,13 +14,16 @@ import {
 import { useTranslation } from 'react-i18next';
 import { database } from '@src/database/database';
 import { useActiveUserContext } from '@src/context/userContext';
-import { calculateUpdatedHabitStats } from '@src/common/helpers/habit.helper';
+import {
+  calculateCompletedHabitStats,
+  isTodayAmongHabitDates,
+} from '@src/common/helpers/habit.helper';
 import { Feather } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
 import { IHabit } from '@src/common/interfaces/dbInterfaces';
 
 export default function SelectedHabitModal() {
-  const { userHabits, setUserHabits, setUserHabitsDates } =
+  const { userHabits, setUserHabits, userHabitsDates, setUserHabitsDates } =
     useUserHabitsContext();
   const { habitId } = useLocalSearchParams();
   const { activeUser } = useActiveUserContext();
@@ -36,6 +39,12 @@ export default function SelectedHabitModal() {
   if (!selectedHabit) {
     return <Redirect href="/homeScreen" />;
   }
+
+  const selectedHabitDates = userHabitsDates.filter(
+    (habitDate) => habitDate.habitId === selectedHabit.id,
+  );
+
+  const isTodayCompleted = isTodayAmongHabitDates(selectedHabitDates);
 
   const deleteHabitAlert = async () =>
     new Promise((resolve) => {
@@ -86,12 +95,13 @@ export default function SelectedHabitModal() {
   };
 
   const completeHabitOfTheDay = async () => {
-    selectedHabit.consecutiveDaysCompleted += 1;
-    selectedHabit.isTodayCompleted = 1;
-
-    const calculatedHabit = calculateUpdatedHabitStats(selectedHabit);
+    const calculatedHabit = calculateCompletedHabitStats(
+      selectedHabit,
+      selectedHabitDates,
+    );
 
     await database.completeUserHabit(calculatedHabit);
+
     const dbUserHabits = await database.getUserHabits(activeUser.id);
     setUserHabits(dbUserHabits);
 
@@ -151,8 +161,7 @@ export default function SelectedHabitModal() {
           {t('notificationTime')}: {selectedHabit?.notificationTime ?? '-'}
         </Text>
         <Text style={styles.userTitle}>
-          {t('isTodayCompleted')}:{' '}
-          {selectedHabit?.isTodayCompleted === 0 ? t('no') : t('yes')}
+          {t('isTodayCompleted')}: {isTodayCompleted ? t('yes') : t('no')}
         </Text>
       </View>
 
@@ -161,10 +170,10 @@ export default function SelectedHabitModal() {
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
             ...styles.completeButton,
-            opacity: selectedHabit.isTodayCompleted ? 0.5 : 1,
+            opacity: isTodayCompleted ? 0.5 : 1,
           }}
           onPress={() => void completeHabitOfTheDay()}
-          disabled={!!selectedHabit.isTodayCompleted}
+          disabled={!!isTodayCompleted}
         >
           <Text style={styles.buttonText}>{t('completeDayHabit')}</Text>
         </TouchableOpacity>

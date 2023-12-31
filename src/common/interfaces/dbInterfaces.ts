@@ -16,8 +16,6 @@ export interface IHabitInput {
   ask: number; //act as boolean = 0(false) or 1(true)
   notificationTime: string | null;
   notificationId: string | null;
-  isTodayCompleted: number; //act as boolean = 0(false) or 1(true)
-  todayDate: string;
 }
 
 export interface IHabit extends IHabitInput {

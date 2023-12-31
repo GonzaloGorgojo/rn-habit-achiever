@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import {
@@ -6,8 +7,9 @@ import {
   IHabitInput,
   IUser,
 } from '@src/common/interfaces/dbInterfaces';
+import { dateFormat } from '@src/common/constants/commonConstants';
 
-export function openDatabase() {
+function openDatabase() {
   if (Platform.OS === 'web') {
     return {
       transaction: () => {
@@ -86,7 +88,7 @@ const setupDatabase = async () => {
         );
         console.log('Creating habits table in case not exists');
         tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, notificationTime TEXT, notificationId TEXT, isTodayCompleted BOOLEAN,todayDate date, CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE);',
+          'CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, habit TEXT, consecutiveDaysCompleted INTEGER, maxConsecutiveDaysCompleted INTEGER, habitReached BOOLEAN, goal INTEGER, ask BOOLEAN, notificationTime TEXT, notificationId TEXT, CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE);',
         );
         console.log('Creating habits dates table in case not exists');
         tx.executeSql(
@@ -192,7 +194,7 @@ const insertUserHabit = async (habit: IHabitInput) => {
       try {
         console.log('Inserting user habit');
         tx.executeSql(
-          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask, notificationTime, notificationId, isTodayCompleted, todayDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'insert into habits (userId, habit, consecutiveDaysCompleted, maxConsecutiveDaysCompleted, habitReached, goal, ask, notificationTime, notificationId) values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             habit.userId,
             habit.habit,
@@ -203,8 +205,6 @@ const insertUserHabit = async (habit: IHabitInput) => {
             habit.ask,
             habit.notificationTime,
             habit.notificationId,
-            habit.isTodayCompleted,
-            habit.todayDate,
           ],
           (_, { rows: { _array } }) => {
             resolve(_array);
@@ -224,7 +224,7 @@ const updateUserHabit = async (habit: IHabit) => {
       try {
         console.log('Updating user habit');
         tx.executeSql(
-          'update habits set userId = ?, habit = ?, consecutiveDaysCompleted = ?, maxConsecutiveDaysCompleted = ?, habitReached = ?, goal = ?, ask = ?, notificationTime = ?, notificationId = ?, isTodayCompleted = ?, todayDate = ? where id = ?;',
+          'update habits set userId = ?, habit = ?, consecutiveDaysCompleted = ?, maxConsecutiveDaysCompleted = ?, habitReached = ?, goal = ?, ask = ?, notificationTime = ?, notificationId = ? where id = ?;',
           [
             habit.userId,
             habit.habit,
@@ -235,8 +235,6 @@ const updateUserHabit = async (habit: IHabit) => {
             habit.ask,
             habit.notificationTime,
             habit.notificationId,
-            habit.isTodayCompleted,
-            habit.todayDate,
             habit.id,
           ],
         );
@@ -270,10 +268,9 @@ const completeUserHabit = async (habit: IHabit) => {
       try {
         console.log('Updating user habit');
         tx.executeSql(
-          'update habits set consecutiveDaysCompleted = ?, isTodayCompleted = ?, maxConsecutiveDaysCompleted = ?, habitReached = ? where id = ?;',
+          'update habits set consecutiveDaysCompleted = ?, maxConsecutiveDaysCompleted = ?, habitReached = ? where id = ?;',
           [
             habit.consecutiveDaysCompleted,
-            habit.isTodayCompleted,
             habit.maxConsecutiveDaysCompleted,
             habit.habitReached,
             habit.id,
@@ -282,7 +279,7 @@ const completeUserHabit = async (habit: IHabit) => {
         console.log('Inserting user habit date');
         tx.executeSql(
           'insert into habits_dates (userId, habitId, dateCompleted) values (?, ?, ?)',
-          [habit.userId, habit.id, habit.todayDate],
+          [habit.userId, habit.id, dayjs().format(dateFormat)],
         );
         resolve(true);
       } catch (error) {
@@ -311,7 +308,7 @@ const getUserHabitsDates = async (
           },
         );
       } catch (error) {
-        console.error(error, 'error getting user habits');
+        console.error(error, 'error getting user habits dates');
         reject(error);
       }
     });
