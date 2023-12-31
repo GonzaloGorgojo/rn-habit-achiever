@@ -107,7 +107,6 @@ export default function SelectedHabitModal() {
 
     const dbUserHabitsDates = await database.getUserHabitsDates(activeUser.id);
     setUserHabitsDates(dbUserHabitsDates);
-
     router.replace('/homeScreen');
   };
 
@@ -116,7 +115,6 @@ export default function SelectedHabitModal() {
       <StatusBar style="dark" />
       <Stack.Screen
         options={{
-          presentation: 'modal',
           headerLeft: undefined,
           headerRight: () => (
             <TouchableOpacity>

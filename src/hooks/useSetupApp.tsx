@@ -14,7 +14,13 @@ export default function useSetupApp() {
         console.log('Setting Up the Database now...');
         //Line below is only for testing when you want to reset the database.
         // await database.dropDatabaseTablesAsync();
+
         await database.setupDatabase();
+        const checkVersion = await database.isDatabaseUpToDate();
+
+        if (!checkVersion) {
+          await database.migrateDatabase();
+        }
         const activeUser = await database.getActiveUser();
         setActiveUser(activeUser);
         if (activeUser) {

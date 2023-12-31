@@ -70,41 +70,45 @@ export default function Modal() {
   }
 
   const createHabit = async () => {
-    if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
-      setBorderColor(Colors.errorColor);
-    } else {
-      setBorderColor(Colors.grey);
+    try {
+      if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
+        setBorderColor(Colors.errorColor);
+      } else {
+        setBorderColor(Colors.grey);
 
-      const userSelection = await confirmHabitAlert();
+        const userSelection = await confirmHabitAlert();
 
-      if (userSelection) {
-        const notificationId =
-          isEnabled && habitNotification.time
-            ? await schedulePushNotification(habitNotification.time)
-            : null;
+        if (userSelection) {
+          const notificationId =
+            isEnabled && habitNotification.time
+              ? await schedulePushNotification(habitNotification.time)
+              : null;
 
-        const notificationTime = isEnabled ? habitNotification.time : null;
+          const notificationTime = isEnabled ? habitNotification.time : null;
 
-        const calculatedHabit: IHabitInput = calculateNewHabitStats(
-          newHabit,
-          activeUser.id,
-          isEnabled && habitNotification.time ? 1 : 0,
-          notificationId,
-          notificationTime,
-        );
+          const calculatedHabit: IHabitInput = calculateNewHabitStats(
+            newHabit,
+            activeUser.id,
+            isEnabled && habitNotification.time ? 1 : 0,
+            notificationId,
+            notificationTime,
+          );
 
-        await database.insertUserHabit(calculatedHabit);
+          await database.insertUserHabit(calculatedHabit);
 
-        const dbUserHabits = await database.getUserHabits(activeUser.id);
-        setUserHabits(dbUserHabits);
+          const dbUserHabits = await database.getUserHabits(activeUser.id);
+          setUserHabits(dbUserHabits);
 
-        router.replace('/homeScreen');
+          router.replace('/homeScreen');
+        }
       }
+      setNewHabit({
+        habit: '',
+        goal: 21,
+      });
+    } catch (error) {
+      console.log(error);
     }
-    setNewHabit({
-      habit: '',
-      goal: 21,
-    });
   };
 
   const editHabit = async () => {

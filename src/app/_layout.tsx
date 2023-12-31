@@ -13,6 +13,8 @@ export default function Layout() {
         <Stack
           screenOptions={{
             title: 'Habit Achiever',
+            headerBackTitleVisible: false,
+
             headerStyle: {
               backgroundColor: Colors.mainColor,
             },
