@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { StatusBar } from 'expo-status-bar';
 import { Button, Linking, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -41,22 +40,26 @@ export default function HomeScreen() {
   }
 
   const checkPermissions = async () => {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
 
-    let finalStatus = existingStatus;
+      // let finalStatus = existingStatus;
 
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+      // if (existingStatus !== 'granted') {
+      //   const { status } = await Notifications.requestPermissionsAsync();
+      //   finalStatus = status;
+      // }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      if (status !== 'granted') {
+        setSettingsModalVisible(true);
+      }
+    } catch (error) {
+      console.error('error:', error);
     }
-    if (finalStatus !== 'granted') {
-      setSettingsModalVisible(true);
-    }
-    setAskForPermission(false);
   };
 
   const confirmGoToSettings = () => {
+    setAskForPermission(false);
     Linking.openSettings();
   };
 
@@ -84,7 +87,10 @@ export default function HomeScreen() {
         text={`${t('notificationsBlocked')}`}
         buttonTitle={`${t('goToSettings')}`}
         onButtonPress={confirmGoToSettings}
-        onClose={() => setSettingsModalVisible(false)}
+        onClose={() => {
+          setAskForPermission(false);
+          setSettingsModalVisible(false);
+        }}
       />
     </SafeAreaView>
   );

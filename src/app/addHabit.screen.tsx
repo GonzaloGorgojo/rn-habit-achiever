@@ -74,15 +74,19 @@ export default function Modal() {
   }
 
   const checkInputAndCallModal = () => {
-    if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
-      setBorderColor(Colors.errorColor);
-    } else {
-      setBorderColor(Colors.grey);
-      if (isEdit) {
-        setEditHabitModalVisible(true);
+    try {
+      if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
+        setBorderColor(Colors.errorColor);
       } else {
-        setCreateHabitModalVisible(true);
+        setBorderColor(Colors.grey);
+        if (isEdit) {
+          setEditHabitModalVisible(true);
+        } else {
+          setCreateHabitModalVisible(true);
+        }
       }
+    } catch (error) {
+      console.error('error: ', error);
     }
   };
 
