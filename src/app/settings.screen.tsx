@@ -5,56 +5,29 @@ import { useActiveUserContext } from '@src/context/userContext';
 import { database } from '@src/database/database';
 import { Redirect, router, useNavigation } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  Alert,
-  Button,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
+import { useState } from 'react';
+import { CustomModal } from '@src/components/CustomModal.component';
 
 export default function SettingsModal() {
   const { t } = useTranslation();
   const { activeUser, setActiveUser } = useActiveUserContext();
   const navigation = useNavigation();
+  const [notificationsModalVisible, setNotificationsModalVisible] =
+    useState<boolean>(false);
+  const [deleteUserModalVisible, setDeleteUserModalVisible] =
+    useState<boolean>(false);
 
   if (!activeUser) {
     return <Redirect href="/" />;
   }
 
-  const deleteUserAlert = async () =>
-    new Promise((resolve) => {
-      Alert.alert(
-        `${t('confirm')}`,
-        `${t('deleteUserConfirmation')} ${activeUser.name}`,
-        [
-          {
-            text: `${t('delete')}`,
-            onPress: () => {
-              database.deleteUser(activeUser.id);
-              setActiveUser(null);
-              resolve('YES');
-            },
-          },
-          {
-            text: `${t('cancel')}`,
-            onPress: () => resolve('Cancel Pressed'),
-            style: 'cancel',
-          },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {},
-        },
-      );
-    });
-
-  const deleteUser = async () => {
+  const confirmToDeleteUser = () => {
     try {
-      await deleteUserAlert();
+      database.deleteUser(activeUser.id);
+      setActiveUser(null);
       const resetAction = StackActions.popToTop();
       navigation.dispatch(resetAction);
       router.replace('/');
@@ -63,8 +36,13 @@ export default function SettingsModal() {
     }
   };
 
-  const turnOffAllNotifications = async () => {
-    await Notifications.cancelAllScheduledNotificationsAsync();
+  const confirmToCancelNotifications = async () => {
+    try {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      setNotificationsModalVisible(false);
+    } catch (error) {
+      console.error('error: ', error);
+    }
   };
 
   return (
@@ -75,19 +53,34 @@ export default function SettingsModal() {
       </View>
       <View style={styles.languageContainer}>
         <Text style={styles.languageText}>{t('cancelNotifications')}</Text>
-        <Button
-          title={t('cancel')}
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onPress={async () => await turnOffAllNotifications()}
-        />
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => setNotificationsModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>{t('cancel')}</Text>
+        </TouchableOpacity>
       </View>
-
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => void deleteUser()}
+        onPress={() => setDeleteUserModalVisible(true)}
       >
         <Text style={styles.buttonText}>{t('deleteUserButton')}</Text>
       </TouchableOpacity>
+
+      <CustomModal
+        isVisible={notificationsModalVisible}
+        text={`${t('cancelNotifications')} ?`}
+        buttonTitle={t('confirm')}
+        onButtonPress={async () => await confirmToCancelNotifications()}
+        onClose={() => setNotificationsModalVisible(false)}
+      />
+      <CustomModal
+        isVisible={deleteUserModalVisible}
+        text={`${t('deleteUserConfirmation')} ${activeUser.name}`}
+        buttonTitle={t('delete')}
+        onButtonPress={confirmToDeleteUser}
+        onClose={() => setDeleteUserModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -110,6 +103,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     position: 'absolute',
     bottom: '5%',
+  },
+  cancelButton: {
+    backgroundColor: Colors.lightRed,
+    padding: 5,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '25%',
+    borderColor: Colors.black,
+    borderWidth: 1,
   },
   buttonText: {
     color: Colors.white,

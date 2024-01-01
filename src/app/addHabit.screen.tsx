@@ -7,7 +7,6 @@ import {
 } from '@src/common/interfaces/dbInterfaces';
 import { useState } from 'react';
 import {
-  Alert,
   StyleSheet,
   Switch,
   Text,
@@ -33,6 +32,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { TimerPickerModal } from 'react-native-timer-picker';
 import { formatTime } from '@src/common/helpers/calculation.helper';
 import * as Notifications from 'expo-notifications';
+import { CustomModal } from '@src/components/CustomModal.component';
 
 export default function Modal() {
   const navigation = useNavigation();
@@ -41,6 +41,10 @@ export default function Modal() {
   const { habit, isEdit } = useLocalSearchParams();
   const { setUserHabits } = useUserHabitsContext();
 
+  const [createHabitModalVisible, setCreateHabitModalVisible] =
+    useState<boolean>(false);
+  const [editHabitModalVisible, setEditHabitModalVisible] =
+    useState<boolean>(false);
   const [borderColor, setBorderColor] = useState<string>(Colors.lightMainColor);
 
   const habitToEdit: IHabit | null = habit
@@ -66,60 +70,82 @@ export default function Modal() {
   if (!activeUser) {
     const resetAction = StackActions.popToTop();
     navigation.dispatch(resetAction);
-    return router.replace('/loginScreen');
+    return router.replace('/login.screen');
   }
 
-  const createHabit = async () => {
-    try {
-      if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
-        setBorderColor(Colors.errorColor);
+  const checkInputAndCallModal = () => {
+    if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
+      setBorderColor(Colors.errorColor);
+    } else {
+      setBorderColor(Colors.grey);
+      if (isEdit) {
+        setEditHabitModalVisible(true);
       } else {
-        setBorderColor(Colors.grey);
-
-        const userSelection = await confirmHabitAlert();
-
-        if (userSelection) {
-          const notificationId =
-            isEnabled && habitNotification.time
-              ? await schedulePushNotification(habitNotification.time)
-              : null;
-
-          const notificationTime = isEnabled ? habitNotification.time : null;
-
-          const calculatedHabit: IHabitInput = calculateNewHabitStats(
-            newHabit,
-            activeUser.id,
-            isEnabled && habitNotification.time ? 1 : 0,
-            notificationId,
-            notificationTime,
-          );
-
-          await database.insertUserHabit(calculatedHabit);
-
-          const dbUserHabits = await database.getUserHabits(activeUser.id);
-          setUserHabits(dbUserHabits);
-
-          router.replace('/homeScreen');
-        }
+        setCreateHabitModalVisible(true);
       }
+    }
+  };
+
+  const schedulePushNotification = async (
+    notiTime: string,
+  ): Promise<string> => {
+    console.log('scheduling notification');
+    const [hour, minutes] = notiTime.split(':');
+
+    const notificationIdentifier =
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "You've got mail! 📬",
+          body: 'Here is the notification body',
+        },
+        trigger: { hour: Number(hour), minute: Number(minutes), repeats: true },
+      });
+
+    return notificationIdentifier;
+  };
+
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => !previousState);
+    if (!isEnabled) {
+      setIsVisible(true);
+    }
+  };
+
+  const confirmToCreateHabit = async () => {
+    try {
+      const notificationId =
+        isEnabled && habitNotification.time
+          ? await schedulePushNotification(habitNotification.time)
+          : null;
+
+      const notificationTime = isEnabled ? habitNotification.time : null;
+
+      const calculatedHabit: IHabitInput = calculateNewHabitStats(
+        newHabit,
+        activeUser.id,
+        isEnabled && habitNotification.time ? 1 : 0,
+        notificationId,
+        notificationTime,
+      );
+
+      await database.insertUserHabit(calculatedHabit);
+
+      const dbUserHabits = await database.getUserHabits(activeUser.id);
+      setUserHabits(dbUserHabits);
+
+      router.replace('/home.screen');
       setNewHabit({
         habit: '',
         goal: 21,
       });
     } catch (error) {
-      console.log(error);
+      console.error('error: ', error);
     }
   };
 
-  const editHabit = async () => {
-    if (newHabit.habit.trim().length <= 0 || isNaN(newHabit.goal)) {
-      setBorderColor(Colors.errorColor);
-    } else {
-      setBorderColor(Colors.grey);
-
-      const userSelection = await confirmHabitAlert();
-
-      if (userSelection && habitToEdit) {
+  const confirmToEditHabit = async () => {
+    try {
+      if (habitToEdit) {
         if (habitToEdit.notificationId) {
           await Notifications.cancelScheduledNotificationAsync(
             habitToEdit.notificationId,
@@ -147,61 +173,10 @@ export default function Modal() {
         const dbUserHabits = await database.getUserHabits(activeUser.id);
         setUserHabits(dbUserHabits);
 
-        router.replace('/homeScreen');
+        router.replace('/home.screen');
       }
-    }
-  };
-
-  const confirmHabitAlert = async () =>
-    new Promise((resolve) => {
-      Alert.alert(
-        `${t('confirm')}`,
-        `${t('confirmHabitName')} ${newHabit.habit}  ${t('confirmHabitDays')} ${
-          newHabit.goal
-        }`,
-        [
-          {
-            style: 'default',
-            text: `${!isEdit ? t('create') : t('edit')}`,
-            onPress: () => {
-              resolve(true);
-            },
-          },
-          {
-            style: 'cancel',
-            text: `${t('cancel')}`,
-            onPress: () => resolve(false),
-          },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {},
-        },
-      );
-    });
-
-  const schedulePushNotification = async (
-    notiTime: string,
-  ): Promise<string> => {
-    console.log('scheduling notification');
-    const [hour, minutes] = notiTime.split(':');
-
-    const notificationIdentifier =
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "You've got mail! 📬",
-          body: 'Here is the notification body',
-        },
-        trigger: { hour: Number(hour), minute: Number(minutes), repeats: true },
-      });
-
-    return notificationIdentifier;
-  };
-
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-    if (!isEnabled) {
-      setIsVisible(true);
+    } catch (error) {
+      console.error('error: ', error);
     }
   };
 
@@ -291,25 +266,15 @@ export default function Modal() {
           </View>
         </View>
 
-        {!isEdit ? (
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={() => void createHabit()}
-          >
-            <Text style={{ ...commonStyle.label, color: Colors.black }}>
-              {t('createHabitButton')}
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={() => void editHabit()}
-          >
-            <Text style={{ ...commonStyle.label, color: Colors.black }}>
-              {t('editHabitButton')}
-            </Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.createButton}
+          onPress={() => void checkInputAndCallModal()}
+        >
+          <Text style={{ ...commonStyle.label, color: Colors.black }}>
+            {isEdit ? t('editHabitButton') : t('createHabitButton')}
+          </Text>
+        </TouchableOpacity>
+
         <View style={styles.informativeContainer}>
           <Ionicons
             name="information-circle-outline"
@@ -319,6 +284,25 @@ export default function Modal() {
           <Text style={styles.informative}>{t('information')}</Text>
         </View>
       </ScrollView>
+
+      <CustomModal
+        isVisible={createHabitModalVisible}
+        text={`${t('confirmHabitName')} ${newHabit.habit}  ${t(
+          'confirmHabitDays',
+        )} ${newHabit.goal}`}
+        buttonTitle={t('create')}
+        onButtonPress={async () => await confirmToCreateHabit()}
+        onClose={() => setCreateHabitModalVisible(false)}
+      />
+      <CustomModal
+        isVisible={editHabitModalVisible}
+        text={`${t('confirmHabitName')} ${newHabit.habit}  ${t(
+          'confirmHabitDays',
+        )} ${newHabit.goal}`}
+        buttonTitle={t('edit')}
+        onButtonPress={async () => await confirmToEditHabit()}
+        onClose={() => setEditHabitModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

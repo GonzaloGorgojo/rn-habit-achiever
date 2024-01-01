@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import '@src/languages/i18n';
 import { Colors } from '@src/common/constants/colors';
@@ -21,6 +21,8 @@ import {
 import { Feather } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
 import { IHabit } from '@src/common/interfaces/dbInterfaces';
+import { CustomModal } from '@src/components/CustomModal.component';
+import { useState } from 'react';
 
 export default function SelectedHabitModal() {
   const { userHabits, setUserHabits, userHabitsDates, setUserHabitsDates } =
@@ -28,16 +30,18 @@ export default function SelectedHabitModal() {
   const { habitId } = useLocalSearchParams();
   const { activeUser } = useActiveUserContext();
   const { t } = useTranslation();
+  const [deleteHabitModalVisible, setDeleteHabitModalVisible] =
+    useState<boolean>(false);
 
   const selectedHabit: IHabit | undefined = userHabits.find(
     (habit) => habit.id === Number(habitId),
   );
 
   if (!activeUser) {
-    return <Redirect href="/loginScreen" />;
+    return <Redirect href="/login.screen" />;
   }
   if (!selectedHabit) {
-    return <Redirect href="/homeScreen" />;
+    return <Redirect href="/home.screen" />;
   }
 
   const selectedHabitDates = userHabitsDates.filter(
@@ -46,34 +50,8 @@ export default function SelectedHabitModal() {
 
   const isTodayCompleted = isTodayAmongHabitDates(selectedHabitDates);
 
-  const deleteHabitAlert = async () =>
-    new Promise((resolve) => {
-      Alert.alert(
-        `${t('confirm')}`,
-        `${t('deleteHabitConfirmation')} ${selectedHabit?.habit}`,
-        [
-          {
-            text: `${t('delete')}`,
-            onPress: () => {
-              resolve(true);
-            },
-          },
-          {
-            text: `${t('cancel')}`,
-            onPress: () => resolve(false),
-            style: 'cancel',
-          },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {},
-        },
-      );
-    });
-
-  const deleteHabit = async () => {
-    const userSelection = await deleteHabitAlert();
-    if (userSelection) {
+  const confirmToDeleteHabit = async () => {
+    try {
       if (selectedHabit.notificationId) {
         await Notifications.cancelScheduledNotificationAsync(
           selectedHabit.notificationId,
@@ -90,24 +68,32 @@ export default function SelectedHabitModal() {
       setUserHabits(dbUserHabits);
       setUserHabitsDates(dbUserHabitsDates);
 
-      router.replace('/homeScreen');
+      router.replace('/home.screen');
+    } catch (error) {
+      console.error('error: ', error);
     }
   };
 
   const completeHabitOfTheDay = async () => {
-    const calculatedHabit = calculateCompletedHabitStats(
-      selectedHabit,
-      selectedHabitDates,
-    );
+    try {
+      const calculatedHabit = calculateCompletedHabitStats(
+        selectedHabit,
+        selectedHabitDates,
+      );
 
-    await database.completeUserHabit(calculatedHabit);
+      await database.completeUserHabit(calculatedHabit);
 
-    const dbUserHabits = await database.getUserHabits(activeUser.id);
-    setUserHabits(dbUserHabits);
+      const dbUserHabits = await database.getUserHabits(activeUser.id);
+      setUserHabits(dbUserHabits);
 
-    const dbUserHabitsDates = await database.getUserHabitsDates(activeUser.id);
-    setUserHabitsDates(dbUserHabitsDates);
-    router.replace('/homeScreen');
+      const dbUserHabitsDates = await database.getUserHabitsDates(
+        activeUser.id,
+      );
+      setUserHabitsDates(dbUserHabitsDates);
+      router.replace('/home.screen');
+    } catch (error) {
+      console.error('error: ', error);
+    }
   };
 
   return (
@@ -120,7 +106,7 @@ export default function SelectedHabitModal() {
             <TouchableOpacity>
               <Link
                 href={{
-                  pathname: '/addHabitModal',
+                  pathname: '/addHabit.screen',
                   params: {
                     habit: JSON.stringify(selectedHabit),
                     isEdit: String(true),
@@ -180,11 +166,19 @@ export default function SelectedHabitModal() {
             ...styles.completeButton,
             backgroundColor: Colors.errorColor,
           }}
-          onPress={() => void deleteHabit()}
+          onPress={() => void setDeleteHabitModalVisible(true)}
         >
           <Text style={styles.buttonText}>{t('deleteHabit')}</Text>
         </TouchableOpacity>
       </View>
+
+      <CustomModal
+        isVisible={deleteHabitModalVisible}
+        text={`${t('deleteHabitConfirmation')} ${selectedHabit?.habit}`}
+        buttonTitle={t('delete')}
+        onButtonPress={async () => await confirmToDeleteHabit()}
+        onClose={() => setDeleteHabitModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

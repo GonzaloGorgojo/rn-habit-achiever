@@ -25,7 +25,7 @@ const CurrentHabit = () => {
   );
 
   const goToSelectedHabit = (habitId: number) => {
-    router.push({ pathname: '/selectedHabitModal', params: { habitId } });
+    router.push({ pathname: '/selectedHabit.screen', params: { habitId } });
   };
 
   return (

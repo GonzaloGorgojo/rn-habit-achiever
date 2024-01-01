@@ -1,5 +1,6 @@
 import { Colors } from '@src/common/constants/colors';
 import { commonStyle } from '@src/common/style/commonStyle.style';
+import { CustomModal } from '@src/components/CustomModal.component';
 import { useActiveUserContext } from '@src/context/userContext';
 import { database } from '@src/database/database';
 import { Redirect, router } from 'expo-router';
@@ -7,7 +8,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -21,50 +21,32 @@ export default function LoginScreen() {
   const [userName, setUserName] = useState<string>('');
   const [borderColor, setBorderColor] = useState<string>(Colors.grey);
   const { activeUser, setActiveUser } = useActiveUserContext();
+  const [createUserModalVisible, setCreateUserModalVisible] =
+    useState<boolean>(false);
 
   if (activeUser) {
-    <Redirect href="/homeScreen" />;
+    <Redirect href="/home.screen" />;
   }
 
-  const confirmUserAlert = async (name: string) =>
-    new Promise((resolve) => {
-      Alert.alert(
-        `${t('confirm')}`,
-        `${t('confirmUser')} ${name}`,
-        [
-          {
-            text: `${t('create')}`,
-            onPress: () => {
-              database.insertUser(name);
-              resolve(true);
-            },
-          },
-          {
-            text: `${t('cancel')}`,
-            onPress: () => resolve(false),
-            style: 'cancel',
-          },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {},
-        },
-      );
-    });
-
-  const createUser = async (name: string) => {
+  const createUser = (name: string) => {
     if (name.trim().length <= 0) {
       setBorderColor(Colors.errorColor);
     } else {
       setBorderColor(Colors.grey);
-      const userSelection = await confirmUserAlert(name);
-      if (userSelection) {
-        const activeUser = await database.getActiveUser();
-        setActiveUser(activeUser);
-        router.replace('/homeScreen');
-      }
+      setCreateUserModalVisible(true);
     }
-    setUserName('');
+  };
+
+  const confirmToCreateUser = async () => {
+    try {
+      database.insertUser(userName);
+      const activeUser = await database.getActiveUser();
+      setActiveUser(activeUser);
+      router.replace('/home.screen');
+      setUserName('');
+    } catch (error) {
+      console.log('error: ', error);
+    }
   };
 
   return (
@@ -91,6 +73,14 @@ export default function LoginScreen() {
       >
         <Text>{t('createUser')}</Text>
       </TouchableOpacity>
+
+      <CustomModal
+        isVisible={createUserModalVisible}
+        text={`${t('confirmUser')} ${userName}`}
+        buttonTitle={t('confirm')}
+        onButtonPress={async () => await confirmToCreateUser()}
+        onClose={() => setCreateUserModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

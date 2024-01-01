@@ -25,7 +25,7 @@ export default function Layout() {
 
             headerRight: () => (
               <TouchableOpacity>
-                <Link href="/settingsModal">
+                <Link href="/settings.screen">
                   <AntDesign name="setting" size={30} color="black" />
                 </Link>
               </TouchableOpacity>
@@ -33,16 +33,16 @@ export default function Layout() {
 
             headerLeft: () => (
               <TouchableOpacity>
-                <Link href="/addHabitModal">
+                <Link href="/addHabit.screen">
                   <AntDesign name="pluscircleo" size={28} color="black" />
                 </Link>
               </TouchableOpacity>
             ),
           }}
         >
-          <Stack.Screen name="homeScreen" />
+          <Stack.Screen name="home.screen" />
           <Stack.Screen
-            name="loginScreen"
+            name="login.screen"
             options={{
               title: 'Habit Achiever',
               headerLeft: undefined,
@@ -52,16 +52,14 @@ export default function Layout() {
             }}
           />
           <Stack.Screen
-            name="addHabitModal"
+            name="addHabit.screen"
             options={{
-              presentation: 'modal',
               headerLeft: undefined,
             }}
           />
           <Stack.Screen
-            name="settingsModal"
+            name="settings.screen"
             options={{
-              presentation: 'modal',
               headerLeft: undefined,
               headerRight: undefined,
             }}

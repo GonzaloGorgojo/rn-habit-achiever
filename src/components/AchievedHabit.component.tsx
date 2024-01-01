@@ -19,7 +19,7 @@ const AchievedHabit = () => {
 
   const goToSelectedHabit = (habitId: number) => {
     router.push({
-      pathname: '/selectedHabitModal',
+      pathname: '/selectedHabit.screen',
       params: { habitId },
     });
   };

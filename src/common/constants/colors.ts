@@ -11,4 +11,5 @@ export const Colors = {
   lighterMainColor: '#e5f9f2',
   lightGreen: '#a8f5a8',
   lightRed: '#b51b1b',
+  glassLike: 'rgba(255, 255, 255, 0.4)',
 };

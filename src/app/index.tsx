@@ -14,9 +14,9 @@ export default function Main() {
   if (isDBLoadingComplete) {
     SplashScreen.hideAsync();
     if (activeUser) {
-      return <Redirect href="/homeScreen" />;
+      return <Redirect href="/home.screen" />;
     } else {
-      return <Redirect href="/loginScreen" />;
+      return <Redirect href="/login.screen" />;
     }
   }
 
